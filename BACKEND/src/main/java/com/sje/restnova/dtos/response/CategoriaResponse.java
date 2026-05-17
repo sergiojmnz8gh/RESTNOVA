@@ -6,5 +6,7 @@ import lombok.Data;
 public class CategoriaResponse {
     private Integer id;
     private String nombre;
+    private Integer orden;
     private Boolean disponible;
 }
+

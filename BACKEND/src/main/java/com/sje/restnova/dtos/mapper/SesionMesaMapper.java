@@ -18,8 +18,10 @@ public interface SesionMesaMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "mesa.id", source = "mesaId")
     @Mapping(target = "camarero.id", source = "camareroId")
-    @Mapping(target = "fechaApertura", ignore = true) // Set in service
+    @Mapping(target = "fechaApertura", ignore = true) 
     @Mapping(target = "fechaCierre", ignore = true)
-    @Mapping(target = "tokenQr", ignore = true) // Set in service
+    @Mapping(target = "tokenQr", ignore = true) 
+    @Mapping(target = "codigoAcceso", ignore = true) 
     SesionMesa toEntity(SesionMesaRequest sesionMesaRequest);
 }
+

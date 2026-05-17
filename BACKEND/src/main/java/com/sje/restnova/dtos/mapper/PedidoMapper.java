@@ -11,6 +11,7 @@ import com.sje.restnova.entities.Pedido;
 public interface PedidoMapper {
     
     @Mapping(target = "sesionMesaId", source = "sesionMesa.id")
+    @Mapping(target = "mesaId", source = "sesionMesa.mesa.id")
     @Mapping(target = "numeroMesa", source = "sesionMesa.mesa.numeroMesa")
     @Mapping(target = "usuarioNombre", source = "usuario.nombre")
     PedidoResponse toResponseDTO(Pedido pedido);
@@ -18,8 +19,10 @@ public interface PedidoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sesionMesa.id", source = "sesionMesaId")
     @Mapping(target = "usuario.id", source = "usuarioId")
-    @Mapping(target = "fechaHora", ignore = true) // Set in service
+    @Mapping(target = "fechaHora", ignore = true) 
     @Mapping(target = "estado", constant = "PENDIENTE")
-    @Mapping(target = "total", ignore = true) // Calculated in service
+    @Mapping(target = "total", ignore = true) 
+    @Mapping(target = "metodoPago", ignore = true) 
     Pedido toEntity(PedidoRequest pedidoRequest);
 }
+

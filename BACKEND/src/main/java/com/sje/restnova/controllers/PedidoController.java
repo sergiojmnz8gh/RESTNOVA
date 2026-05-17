@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/pedidos")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class PedidoController {
 
     private final PedidoService pedidoService;
@@ -19,6 +19,11 @@ public class PedidoController {
     @GetMapping
     public ResponseEntity<List<PedidoResponse>> getAllOrders() {
         return ResponseEntity.ok(pedidoService.getAllOrders());
+    }
+
+    @GetMapping("/sesion/{sessionId}")
+    public ResponseEntity<List<PedidoResponse>> getOrdersBySession(@PathVariable Integer sessionId) {
+        return ResponseEntity.ok(pedidoService.getOrdersBySession(sessionId));
     }
 
     @PostMapping
@@ -38,9 +43,24 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.updateStatus(id, newStatus));
     }
 
+    @PostMapping("/{id}/pago-callback")
+    public ResponseEntity<Void> paymentCallback(
+            @PathVariable Integer id,
+            @RequestBody java.util.Map<String, String> body
+    ) {
+        String responseCode = body.get("responseCode");
+        com.sje.restnova.entities.Pedido.EstadoPedido status = "0000".equals(responseCode) 
+            ? com.sje.restnova.entities.Pedido.EstadoPedido.PAGADO 
+            : com.sje.restnova.entities.Pedido.EstadoPedido.PENDIENTE_PAGO;
+            
+        pedidoService.updateStatus(id, status);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Integer id) {
         pedidoService.deleteOrder(id);
         return ResponseEntity.noContent().build();
     }
 }
+

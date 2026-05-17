@@ -1,10 +1,8 @@
 import { Toast, ToastContainer } from 'react-bootstrap';
 
-import type { ToastProps } from '../../types/UITypes';
+import type { ToastProps } from '../types/UITypes';
 
-/**
- * Global Toast component using React-Bootstrap.
- */
+
 export const CustomToast: React.FC<ToastProps> = ({
     show,
     onClose,
@@ -52,7 +50,8 @@ export const CustomToast: React.FC<ToastProps> = ({
     );
 };
 
-// Shorthand components
+
 export const SuccessToast: React.FC<Omit<ToastProps, 'type'>> = (props) => <CustomToast {...props} type="success" title="¡Éxito!" />;
 export const ErrorToast: React.FC<Omit<ToastProps, 'type'>> = (props) => <CustomToast {...props} type="error" title="Error" />;
 export const WarningToast: React.FC<Omit<ToastProps, 'type'>> = (props) => <CustomToast {...props} type="warning" title="Atención" />;
+

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Table, Badge, Button, Spinner, Modal, Form } from 'react-bootstrap';
-import api from '../services/apiConfig';
+import { Row, Col, Table, Badge, Button, Spinner, Modal, Form } from 'react-bootstrap';
 import { useUI } from '../context/UIContext';
+import { reservaService } from '../services/reservaService';
+import { usuarioService } from '../services/usuarioService';
+import { PageHeader } from '../components/PageHeader';
 import type { Reserva } from '../types/ReservationTypes';
 
 export const ReservationsPage: React.FC = () => {
@@ -10,9 +12,10 @@ export const ReservationsPage: React.FC = () => {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     
-    // Modal state
+    
     const [showModal, setShowModal] = useState(false);
     const [editingReserva, setEditingReserva] = useState<Reserva | null>(null);
+    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [formData, setFormData] = useState({
         usuarioId: '',
         fecha: '',
@@ -23,12 +26,12 @@ export const ReservationsPage: React.FC = () => {
 
     const loadData = async () => {
         try {
-            const [resRes, userRes] = await Promise.all([
-                api.get('/reservas'),
-                api.get('/usuarios')
+            const [resData, userData] = await Promise.all([
+                reservaService.listarTodas(),
+                usuarioService.listarTodos()
             ]);
-            setReservations(resRes.data);
-            setUsers(userRes.data);
+            setReservations(resData);
+            setUsers(userData);
         } catch (error) {
             showToast('Error', 'No se pudieron cargar las reservas', 'danger');
         } finally {
@@ -53,7 +56,7 @@ export const ReservationsPage: React.FC = () => {
         } else {
             setEditingReserva(null);
             const today = new Date();
-            today.setDate(today.getDate() + 1); // Tomorrow by default
+            today.setDate(today.getDate() + 1); 
             const dateStr = today.toISOString().split('T')[0];
             setFormData({
                 usuarioId: '',
@@ -74,13 +77,13 @@ export const ReservationsPage: React.FC = () => {
                 usuarioId: parseInt(formData.usuarioId),
                 numPersonas: parseInt(formData.numPersonas.toString()),
                 hora: formData.hora + ":00"
-            };
+            } as any;
 
             if (editingReserva) {
-                await api.put(`/reservas/${editingReserva.id}`, payload);
+                await reservaService.actualizar(editingReserva.id, payload);
                 showToast('Éxito', 'Reserva actualizada');
             } else {
-                await api.post('/reservas', payload);
+                await reservaService.crear(payload);
                 showToast('Éxito', 'Reserva creada correctamente');
             }
             setShowModal(false);
@@ -99,7 +102,7 @@ export const ReservationsPage: React.FC = () => {
             `¿Estás seguro de que deseas eliminar permanentemente la reserva de ${cliente}?`,
             async () => {
                 try {
-                    await api.delete(`/reservas/${id}`);
+                    await reservaService.eliminar(id);
                     showToast('Eliminada', 'Reserva borrada satisfactoriamente');
                     loadData();
                 } catch (error) {
@@ -112,8 +115,10 @@ export const ReservationsPage: React.FC = () => {
 
     const updateStatus = async (res: Reserva, newStatus: string) => {
         try {
-            await api.put(`/reservas/${res.id}`, {
-                ...res,
+            await reservaService.actualizar(res.id, {
+                usuarioId: res.usuarioId || 0,
+                fecha: res.fecha,
+                numPersonas: res.numPersonas,
                 estado: newStatus,
                 hora: res.hora.substring(0, 8)
             });
@@ -134,50 +139,63 @@ export const ReservationsPage: React.FC = () => {
         }
     };
 
+    const filteredReservations = reservations.filter(r => r.fecha === selectedDate);
+
     return (
         <div className="container-fluid py-4 fade-in pb-5">
-            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
-                <div>
-                    <h1 className="display-5 fw-bold mb-1">Libro de Reservas</h1>
-                    <p className="text-muted fw-bold text-uppercase small">Gestión de agenda y aforo</p>
+            <PageHeader 
+                title="Libro de Reservas" 
+                description="Gestión de agenda y aforo estratégico del establecimiento"
+                action={{
+                    label: 'Nueva Reserva',
+                    icon: 'calendar-plus-fill',
+                    onClick: () => handleOpenModal()
+                }}
+            >
+                <div className="d-flex align-items-center bg-white shadow-sm rounded-4 p-2 border border-2 border-primary">
+                    <i className="bi bi-calendar3 ms-2 me-3 text-primary fs-5"></i>
+                    <Form.Control
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="border-0 fw-bold text-primary p-2"
+                        style={{ width: '180px', cursor: 'pointer' }}
+                    />
                 </div>
-                <Button variant="primary" className="px-4 py-3 fw-bold shadow-sm" onClick={() => handleOpenModal()}>
-                    <i className="bi bi-calendar-plus-fill me-2"></i> NUEVA RESERVA
-                </Button>
-            </div>
+            </PageHeader>
 
-            <Card className="border-0 shadow-sm p-4 overflow-hidden">
-                {loading ? (
-                    <div className="text-center py-5">
-                        <Spinner animation="border" variant="primary" />
-                        <p className="mt-3 text-muted fw-bold">Sincronizando agenda...</p>
-                    </div>
-                ) : (
-                    <div className="table-responsive">
+            <div className="table-container shadow-premium rounded-4 overflow-hidden bg-white">
+                <div className="table-responsive">
+                    {loading ? (
+                        <div className="text-center py-5">
+                            <Spinner animation="border" variant="primary" />
+                            <p className="mt-3 text-muted fw-bold">Sincronizando agenda...</p>
+                        </div>
+                    ) : (
                         <Table hover className="align-middle mb-0">
-                            <thead>
+                            <thead className="bg-light">
                                 <tr>
-                                    <th className="py-3">CLIENTE</th>
-                                    <th className="py-3">FECHA Y HORA</th>
-                                    <th className="py-3 text-center">COMENSALES</th>
-                                    <th className="py-3 text-center">ESTADO</th>
-                                    <th className="py-3 text-end">ACCIONES</th>
+                                    <th className="py-3 px-4 border-0 small fw-bold text-muted" style={{ width: '20%' }}>CLIENTE</th>
+                                    <th className="py-3 border-0 small fw-bold text-muted" style={{ width: '20%' }}>FECHA Y HORA</th>
+                                    <th className="py-3 border-0 small fw-bold text-muted text-center" style={{ width: '15%' }}>COMENSALES</th>
+                                    <th className="py-3 border-0 small fw-bold text-muted text-center" style={{ width: '20%' }}>ESTADO</th>
+                                    <th className="py-3 border-0 small fw-bold text-muted text-center" style={{ width: '25%' }}>ACCIONES</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {reservations.map((r) => (
-                                    <tr key={r.id}>
-                                        <td className="py-4">
-                                            <div className="fw-bold text-dark fs-5 text-uppercase">{r.usuarioNombre}</div>
-                                            <small className="text-primary fw-bold">RES-#{r.id.toString().padStart(4, '0')}</small>
+                                {filteredReservations.map((r) => (
+                                    <tr key={r.id} className="border-bottom border-light">
+                                        <td className="py-4 px-4">
+                                            <div className="fw-bold text-primary fs-5 text-uppercase">{r.usuarioNombre}</div>
+                                            <small className="text-muted fw-bold">REF-#{r.id}</small>
                                         </td>
                                         <td className="py-4">
-                                            <div className="fw-bold text-dark fs-5">{r.fecha}</div>
-                                            <div className="small text-muted fw-bold italic">{r.hora.substring(0, 5)} HORAS</div>
+                                            <div className="fw-bold text-primary fs-5">{new Date(r.fecha).toLocaleDateString()}</div>
+                                            <div className="small text-muted fw-bold">{r.hora.substring(0, 5)} HORAS</div>
                                         </td>
                                         <td className="py-4 text-center">
                                             <div className="d-flex align-items-center justify-content-center gap-2">
-                                                <span className="fs-4 fw-bold text-dark">{r.numPersonas}</span>
+                                                <span className="fs-4 fw-bold text-primary">{r.numPersonas}</span>
                                                 <i className="bi bi-people-fill text-primary opacity-50 fs-5"></i>
                                             </div>
                                         </td>
@@ -186,37 +204,37 @@ export const ReservationsPage: React.FC = () => {
                                                 {r.estado}
                                             </Badge>
                                         </td>
-                                        <td className="py-4 text-end">
-                                            <div className="d-flex justify-content-end gap-2">
+                                        <td className="py-4 text-center">
+                                            <div className="d-flex justify-content-center gap-2">
                                                 {r.estado === 'PENDIENTE' && (
-                                                    <Button variant="primary" className="px-3" onClick={() => updateStatus(r, 'CONFIRMADA')} title="Confirmar">
-                                                        <i className="bi bi-check-lg"></i>
+                                                    <Button variant="light" className="text-success p-2 shadow-sm rounded-3 border-0" onClick={() => updateStatus(r, 'CONFIRMADA')} title="Confirmar">
+                                                        <i className="bi bi-check-lg fs-5"></i>
                                                     </Button>
                                                 )}
-                                                <Button variant="outline-primary" className="px-3" onClick={() => handleOpenModal(r)} title="Editar">
-                                                    <i className="bi bi-pencil-square"></i>
+                                                <Button variant="light" className="text-primary p-2 shadow-sm rounded-3 border-0" onClick={() => handleOpenModal(r)} title="Editar">
+                                                    <i className="bi bi-pencil-square fs-5"></i>
                                                 </Button>
-                                                <Button variant="failure" className="px-3 text-white" onClick={() => handleDelete(r.id, r.usuarioNombre)} title="Eliminar">
-                                                    <i className="bi bi-trash3-fill"></i>
+                                                <Button variant="light" className="text-danger p-2 shadow-sm rounded-3 border-0" onClick={() => handleDelete(r.id, r.usuarioNombre)} title="Eliminar">
+                                                    <i className="bi bi-trash3-fill fs-5"></i>
                                                 </Button>
                                             </div>
                                         </td>
                                     </tr>
                                 ))}
-                                {reservations.length === 0 && (
+                                {filteredReservations.length === 0 && (
                                     <tr>
                                         <td colSpan={5} className="text-center py-5 text-muted fw-bold">
-                                            No hay reservas programadas en el sistema.
+                                            No hay reservas para el día {new Date(selectedDate).toLocaleDateString()}.
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
                         </Table>
-                    </div>
-                )}
-            </Card>
+                    )}
+                </div>
+            </div>
 
-            {/* Reservation Modal Update */}
+            {}
             <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
                 <Modal.Header closeButton className="border-bottom-0 px-4 pt-4">
                     <Modal.Title className="fw-bold fs-2 text-primary">
@@ -229,17 +247,27 @@ export const ReservationsPage: React.FC = () => {
                             <Col md={12}>
                                 <Form.Group>
                                     <Form.Label className="small fw-800 text-muted text-uppercase letter-spacing-1">Seleccionar Cliente</Form.Label>
-                                    <Form.Select
-                                        required
-                                        className="premium-input bg-light border-0 fw-bold"
-                                        value={formData.usuarioId}
-                                        onChange={(e) => setFormData({ ...formData, usuarioId: e.target.value })}
-                                    >
-                                        <option value="">Buscar en base de datos...</option>
-                                        {users.map(u => (
-                                            <option key={u.id} value={u.id}>{u.nombre} {u.apellidos} ({u.email})</option>
-                                        ))}
-                                    </Form.Select>
+                                    {editingReserva ? (
+                                        <Form.Control
+                                            type="text"
+                                            readOnly
+                                            disabled
+                                            className="premium-input bg-light border-0 fw-bold"
+                                            value={editingReserva.usuarioNombre || ''}
+                                        />
+                                    ) : (
+                                        <Form.Select
+                                            required
+                                            className="premium-input bg-light border-0 fw-bold"
+                                            value={formData.usuarioId}
+                                            onChange={(e) => setFormData({ ...formData, usuarioId: e.target.value })}
+                                        >
+                                            <option value="">Buscar en base de datos...</option>
+                                            {users.map(u => (
+                                                <option key={u.id} value={u.id}>{u.nombre} {u.apellidos} ({u.email})</option>
+                                            ))}
+                                        </Form.Select>
+                                    )}
                                 </Form.Group>
                             </Col>
                             <Col md={6}>
@@ -309,3 +337,4 @@ export const ReservationsPage: React.FC = () => {
         </div>
     );
 };
+

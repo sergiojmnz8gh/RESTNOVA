@@ -17,3 +17,4 @@ public interface CategoriaMapper {
     @Mapping(target = "productos", ignore = true)
     Categoria toEntity(CategoriaRequest categoriaRequest);
 }
+

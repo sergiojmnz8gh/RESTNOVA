@@ -24,6 +24,7 @@ public class EstadisticasService {
     private final DetallePedidoRepository detallePedidoRepository;
     private final SesionMesaRepository sesionMesaRepository;
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public EstadisticaResponse getEstadisticasMensuales() {
         LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
 
@@ -31,7 +32,7 @@ public class EstadisticasService {
                 .filter(p -> p.getFechaHora().isAfter(startOfMonth))
                 .toList();
 
-        // 1. Totales Financieros
+        
         BigDecimal totalRevenue = orders.stream()
                 .map(Pedido::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -39,14 +40,14 @@ public class EstadisticasService {
         BigDecimal avgTicket = orders.isEmpty() ? BigDecimal.ZERO : 
                 totalRevenue.divide(BigDecimal.valueOf(orders.size()), 2, RoundingMode.HALF_UP);
 
-        // 2. Ventas por Día
+        
         Map<String, BigDecimal> salesByDay = orders.stream()
                 .collect(Collectors.groupingBy(
                         p -> p.getFechaHora().toLocalDate().toString(),
                         Collectors.reducing(BigDecimal.ZERO, Pedido::getTotal, BigDecimal::add)
                 ));
 
-        // 3. Ventas por Categoría
+        
         Map<String, BigDecimal> salesByCategory = orders.stream()
                 .flatMap(p -> p.getDetalles().stream())
                 .collect(Collectors.groupingBy(
@@ -56,7 +57,7 @@ public class EstadisticasService {
                                 BigDecimal::add)
                 ));
 
-        // 4. Ranking de Productos
+        
         List<EstadisticaResponse.ProductoRanking> topProducts = orders.stream()
                 .flatMap(p -> p.getDetalles().stream())
                 .collect(Collectors.groupingBy(
@@ -72,7 +73,15 @@ public class EstadisticasService {
                 .limit(5)
                 .collect(Collectors.toList());
 
-        // 5. Ocupación
+        
+        Map<String, BigDecimal> salesByPaymentMethod = orders.stream()
+                .filter(p -> p.getMetodoPago() != null)
+                .collect(Collectors.groupingBy(
+                        p -> p.getMetodoPago().toString(),
+                        Collectors.reducing(BigDecimal.ZERO, Pedido::getTotal, BigDecimal::add)
+                ));
+
+        
         long totalSessions = sesionMesaRepository.count();
         double occupancyRate = Math.min(100.0, (totalSessions * 10.0) / 100.0);
 
@@ -81,9 +90,11 @@ public class EstadisticasService {
                 .ticketMedio(avgTicket)
                 .ventasPorDia(salesByDay)
                 .ventasPorCategoria(salesByCategory)
+                .ventasPorMetodoPago(salesByPaymentMethod)
                 .topProductos(topProducts)
                 .totalPedidosMensual((long) orders.size())
                 .ocupacionMedia(occupancyRate)
                 .build();
     }
 }
+

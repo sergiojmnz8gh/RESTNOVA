@@ -46,9 +46,17 @@ public class Usuario implements UserDetails {
     @Column(name = "puntos_acumulados", precision = 10, scale = 2)
     private BigDecimal puntosAcumulados = BigDecimal.ZERO;
 
+    @Column(length = 255)
+    private String imagenUrl;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + rol.getNombre().toUpperCase()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -76,3 +84,4 @@ public class Usuario implements UserDetails {
         return true;
     }
 }
+

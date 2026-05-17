@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/estadisticas")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class EstadisticasController {
 
     private final EstadisticasService estadisticasService;
@@ -25,7 +25,6 @@ public class EstadisticasController {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isAdmin) {
-            // El personal de sala no debe ver datos de facturación/monetarios
             return ResponseEntity.ok(EstadisticaResponse.builder()
                     .topProductos(fullReport.getTopProductos())
                     .totalPedidosMensual(fullReport.getTotalPedidosMensual())
@@ -36,3 +35,4 @@ public class EstadisticasController {
         return ResponseEntity.ok(fullReport);
     }
 }
+

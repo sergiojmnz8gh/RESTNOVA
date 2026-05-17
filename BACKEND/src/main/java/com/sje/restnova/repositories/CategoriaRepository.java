@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
-    List<Categoria> findByDisponibleTrue();
+    List<Categoria> findByDisponibleTrueOrderByOrdenAsc();
+    List<Categoria> findAllByOrderByOrdenAsc();
 }
+

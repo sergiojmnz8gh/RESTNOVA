@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class PedidoResponse {
     private Integer id;
     private Integer sesionMesaId;
+    private Integer mesaId;
     private String usuarioNombre;
     private LocalDateTime fechaHora;
     private String estado;
@@ -15,3 +16,4 @@ public class PedidoResponse {
     private String numeroMesa;
     private java.util.List<DetallePedidoResponse> detalles;
 }
+

@@ -1,10 +1,12 @@
 import axios from 'axios';
 
+export const BASE_URL = window.location.origin;
+
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL: `${BASE_URL}/api`,
 });
 
-// Add a request interceptor to include the JWT token
+
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -18,19 +20,19 @@ api.interceptors.request.use(
     }
 );
 
-// Add a response interceptor to handle 401 Unauthorized globally
+
 api.interceptors.response.use(
     (response) => {
         return response;
     },
     (error) => {
         if (error.response && error.response.status === 401) {
-            // Token is expired or invalid
+            
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('user');
-            // Redirect to login only if we are not already there
+            
             if (window.location.pathname !== '/login') {
                 window.location.href = '/login';
             }
@@ -40,3 +42,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+

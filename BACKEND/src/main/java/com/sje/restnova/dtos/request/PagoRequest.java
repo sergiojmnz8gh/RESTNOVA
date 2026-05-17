@@ -11,5 +11,6 @@ public class PagoRequest {
     private Integer pedidoId;
 
     @NotBlank(message = "El método de pago es obligatorio")
-    private String metodoPago; // EFECTIVO, TARJETA, PUNTOS
+    private String metodoPago; 
 }
+

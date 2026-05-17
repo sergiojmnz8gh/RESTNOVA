@@ -23,4 +23,7 @@ public class UsuarioRequest {
 
     @NotBlank(message = "El rol es obligatorio")
     private String rolNombre;
+
+    private String imagenUrl;
 }
+

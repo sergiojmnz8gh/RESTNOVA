@@ -36,11 +36,38 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
+    @ExceptionHandler(com.sje.restnova.exceptions.ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleResourceNotFound(com.sje.restnova.exceptions.ResourceNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Recurso no encontrado");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(com.sje.restnova.exceptions.DuplicateResourceException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicateResource(com.sje.restnova.exceptions.DuplicateResourceException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Recurso duplicado");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDenied(org.springframework.security.access.AccessDeniedException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Acceso denegado");
+        response.put("message", "No tiene permisos suficientes para realizar esta acción.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
+        ex.printStackTrace(); 
         Map<String, String> response = new HashMap<>();
         response.put("error", "Error interno del servidor");
-        response.put("message", "Ha ocurrido un error inesperado al procesar la solicitud.");
+        response.put("message", "Ha ocurrido un error inesperado: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
+
+

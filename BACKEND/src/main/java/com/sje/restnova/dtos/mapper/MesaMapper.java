@@ -15,3 +15,4 @@ public interface MesaMapper {
     @Mapping(target = "id", ignore = true)
     Mesa toEntity(MesaRequest mesaRequest);
 }
+

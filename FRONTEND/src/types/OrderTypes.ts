@@ -3,7 +3,7 @@ import type { Product } from './ProductTypes';
 export interface OrderDetail {
     id: number;
     producto: Product;
-    productoNombre: string; // Used in some simplified views
+    productoNombre: string; 
     cantidad: number;
     precioUnitario: number;
 }
@@ -11,6 +11,7 @@ export interface OrderDetail {
 export interface Order {
     id: number;
     numeroMesa: string;
+    mesaId: number;
     sesionMesaId: number;
     usuarioNombre?: string;
     usuarioEmail?: string;
@@ -20,4 +21,5 @@ export interface Order {
     detalles: OrderDetail[];
 }
 
-export type OrderStatus = 'PENDIENTE_PAGO' | 'PAGADO' | 'EN_PREPARACION' | 'LISTO' | 'CANCELADO';
+export type OrderStatus = 'PENDIENTE' | 'EN_PREPARACION' | 'LISTO_PARA_SERVIR' | 'SERVIDO' | 'CANCELADO';
+

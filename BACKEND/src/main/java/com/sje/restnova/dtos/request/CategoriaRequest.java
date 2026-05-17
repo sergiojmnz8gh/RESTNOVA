@@ -8,4 +8,7 @@ public class CategoriaRequest {
 
     @NotBlank(message = "El nombre de la categoría es obligatorio")
     private String nombre;
+
+    private Integer orden;
 }
+

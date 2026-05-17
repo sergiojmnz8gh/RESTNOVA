@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/mesas")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class MesaController {
 
     private final MesaService mesaService;
@@ -41,3 +41,4 @@ public class MesaController {
         return ResponseEntity.noContent().build();
     }
 }
+

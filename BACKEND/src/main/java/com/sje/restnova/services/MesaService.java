@@ -47,8 +47,9 @@ public class MesaService {
     @Transactional
     public void deleteTable(Integer id) {
         if (!mesaRepository.existsById(id)) {
-            throw new IllegalArgumentException("Mesa no encontrada");
+            throw new com.sje.restnova.exceptions.ResourceNotFoundException("Mesa no encontrada");
         }
         mesaRepository.deleteById(id);
     }
 }
+

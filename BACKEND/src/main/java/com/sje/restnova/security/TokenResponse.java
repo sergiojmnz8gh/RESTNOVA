@@ -5,8 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class TokenResponse {
     private final String token;
     private final UsuarioResponse usuario;
+
+    public TokenResponse(String token, UsuarioResponse usuario) {
+        this.token = token;
+        this.usuario = usuario;
+    }
 }
+

@@ -15,7 +15,8 @@ public interface UsuarioMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "puntosAcumulados", constant = "0.0")
-    @Mapping(target = "rol", ignore = true) // Se setea en el servicio
+    @Mapping(target = "rol", ignore = true) 
     @Mapping(target = "authorities", ignore = true)
     Usuario toEntity(UsuarioRequest usuarioRequest);
 }
+

@@ -26,8 +26,9 @@ public class PagoService {
     public PagoResponse crearPago(com.sje.restnova.dtos.request.PagoRequest request) {
         com.sje.restnova.entities.Pago pago = pagoMapper.toEntity(request);
         pago.setFechaPago(java.time.LocalDateTime.now());
-        pago.setMonto(java.math.BigDecimal.ZERO); // Hardcoded temporalmente, debería agarrarlo del Pedido
+        pago.setMonto(java.math.BigDecimal.ZERO); 
         com.sje.restnova.entities.Pago guardado = pagoRepository.save(pago);
         return pagoMapper.toResponseDTO(guardado);
     }
 }
+

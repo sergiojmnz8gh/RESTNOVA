@@ -8,3 +8,4 @@ public class MesaResponse {
     private String numeroMesa;
     private Integer capacidad;
 }
+

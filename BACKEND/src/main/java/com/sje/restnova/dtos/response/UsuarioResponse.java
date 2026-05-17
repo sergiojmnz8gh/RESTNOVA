@@ -12,4 +12,6 @@ public class UsuarioResponse {
     private String telefono;
     private String rolNombre;
     private BigDecimal puntosAcumulados;
+    private String imagenUrl;
 }
+

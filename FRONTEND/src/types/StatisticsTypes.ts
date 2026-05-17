@@ -12,3 +12,4 @@ export interface StatisticsData {
     totalPedidosMensual: number;
     ocupacionMedia: number;
 }
+

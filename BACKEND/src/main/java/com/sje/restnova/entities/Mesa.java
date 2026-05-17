@@ -22,3 +22,4 @@ public class Mesa {
     @Column(nullable = false)
     private Integer capacidad;
 }
+

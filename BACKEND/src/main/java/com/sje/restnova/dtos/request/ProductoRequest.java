@@ -23,4 +23,7 @@ public class ProductoRequest {
     private Integer categoriaId;
 
     private Boolean disponible = true;
+
+    private String imagenUrl;
 }
+

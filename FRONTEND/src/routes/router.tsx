@@ -1,21 +1,43 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { CategoriesPage } from '../pages/CategoriesPage';
+import { CustomerOrderPage } from '../pages/CustomerOrderPage';
+import { CustomerQRScannerPage } from '../pages/CustomerQRScannerPage';
+import { CustomerReservationPage } from '../pages/CustomerReservationPage';
+import { DashboardPage } from '../pages/DashboardPage';
+import { KitchenPage } from '../pages/KitchenPage';
+import { LandingPage } from '../pages/LandingPage';
+import { LoginPage } from '../pages/LoginPage';
+import { MenuPage } from '../pages/MenuPage';
+import { OrdersPage } from '../pages/OrdersPage';
+import { PrivacyPolicyPage } from '../pages/PrivacyPolicyPage';
+import { ProductsPage } from '../pages/ProductsPage';
+import { ProfilePage } from '../pages/ProfilePage';
+import { RedsysMockPage } from '../pages/RedsysMockPage';
+import { RegisterPage } from '../pages/RegisterPage';
+import { ReservationsPage } from '../pages/ReservationsPage';
+import { TablesPage } from '../pages/TablesPage';
+import { UsersPage } from '../pages/UsersPage';
+import { WaiterOrderPage } from '../pages/WaiterOrderPage';
 import { ProtectedLayout } from './protectedLayout';
 import { ROUTES } from './routes';
-import { LoginPage } from '../pages/LoginPage';
-import { RegisterPage } from '../pages/RegisterPage';
-import { DashboardPage } from '../pages/DashboardPage';
-import { ProductsPage } from '../pages/ProductsPage';
-import { CategoriesPage } from '../pages/CategoriesPage';
-import { TablesPage } from '../pages/TablesPage';
-import { CustomerOrderPage } from '../pages/CustomerOrderPage';
-import { ReservationsPage } from '../pages/ReservationsPage';
-import { OrdersPage } from '../pages/OrdersPage';
-import { KitchenPage } from '../pages/KitchenPage';
-import { PersonalSalaPage } from '../pages/PersonalSalaPage';
-import { StatisticsPage } from '../pages/StatisticsPage';
-
 
 export const router = createBrowserRouter([
+    {
+        path: ROUTES.LANDING,
+        element: <LandingPage />
+    },
+    {
+        path: ROUTES.MENU,
+        element: <MenuPage />
+    },
+    {
+        path: ROUTES.PRIVACY_POLICY,
+        element: <PrivacyPolicyPage />
+    },
+    {
+        path: ROUTES.REDSYS_MOCK,
+        element: <RedsysMockPage />
+    },
     {
         path: ROUTES.LOGIN,
         element: <LoginPage />
@@ -52,6 +74,10 @@ export const router = createBrowserRouter([
                 element: <OrdersPage />
             },
             {
+                path: ROUTES.ADMIN_USUARIOS,
+                element: <UsersPage />
+            },
+            {
                 path: ROUTES.CLIENTE_PEDIDO,
                 element: <CustomerOrderPage />
             },
@@ -59,18 +85,28 @@ export const router = createBrowserRouter([
                 path: ROUTES.KITCHEN,
                 element: <KitchenPage />
             },
+
             {
-                path: ROUTES.STAFF,
-                element: <PersonalSalaPage />
+                path: ROUTES.PERFIL,
+                element: <ProfilePage />
             },
             {
-                path: ROUTES.STATISTICS,
-                element: <StatisticsPage />
+                path: ROUTES.WAITER_ORDER,
+                element: <WaiterOrderPage />
+            },
+            {
+                path: ROUTES.RESERVA_CLIENTE,
+                element: <CustomerReservationPage />
+            },
+            {
+                path: ROUTES.SCAN_QR,
+                element: <CustomerQRScannerPage />
             }
         ]
     },
+
     {
         path: "*",
-        element: <Navigate to={ROUTES.LOGIN} replace />
+        element: <Navigate to={ROUTES.LANDING} replace />
     }
 ]);

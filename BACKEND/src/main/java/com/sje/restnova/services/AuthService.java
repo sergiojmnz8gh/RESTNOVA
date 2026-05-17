@@ -12,8 +12,17 @@ import com.sje.restnova.exceptions.DuplicateResourceException;
 import com.sje.restnova.exceptions.ResourceNotFoundException;
 import com.sje.restnova.repositories.RolRepository;
 import com.sje.restnova.repositories.UsuarioRepository;
+import com.sje.restnova.services.EmailService;
 
 import lombok.RequiredArgsConstructor;
+
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+
+import java.util.Collections;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +32,8 @@ public class AuthService {
     private final UsuarioMapper usuarioMapper;
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final String GOOGLE_CLIENT_ID = "748359950319-t1b4aa46jfrdfaesd1c4l491dt8u8agd.apps.googleusercontent.com";
 
     @Transactional
     public Usuario registrarUsuario(UsuarioRequest request) {
@@ -44,6 +55,45 @@ public class AuthService {
         
         usuario.setRol(rol);
         
-        return usuarioRepository.save(usuario);
+        Usuario guardado = usuarioRepository.save(usuario);
+        emailService.sendRegistrationEmail(guardado);
+        return guardado;
+    }
+
+    @Transactional
+    public Usuario processGoogleLogin(String credentialToken) throws Exception {
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
+            .setAudience(Collections.singletonList(GOOGLE_CLIENT_ID))
+            .build();
+
+        GoogleIdToken idToken = verifier.verify(credentialToken);
+        if (idToken != null) {
+            GoogleIdToken.Payload payload = idToken.getPayload();
+            String email = payload.getEmail();
+            
+            return usuarioRepository.findByEmail(email).orElseGet(() -> {
+                Usuario newUser = new Usuario();
+                newUser.setEmail(email);
+                newUser.setNombre((String) payload.get("given_name"));
+                newUser.setApellidos((String) payload.get("family_name"));
+                newUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+                
+                String pictureUrl = (String) payload.get("picture");
+                if (pictureUrl != null) {
+                    newUser.setImagenUrl(pictureUrl); 
+                }
+
+                Rol rol = rolRepository.findByNombre("CLIENTE")
+                        .orElseThrow(() -> new ResourceNotFoundException("Rol CLIENTE no encontrado"));
+                newUser.setRol(rol);
+                
+                Usuario guardado = usuarioRepository.save(newUser);
+                emailService.sendRegistrationEmail(guardado);
+                return guardado;
+            });
+        } else {
+            throw new IllegalArgumentException("Token de Google inválido");
+        }
     }
 }
+

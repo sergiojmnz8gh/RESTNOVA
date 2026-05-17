@@ -20,3 +20,4 @@ public interface ProductoMapper {
     @Mapping(target = "id", ignore = true)
     void updateProductoFromRequest(ProductoRequest request, @org.mapstruct.MappingTarget Producto producto);
 }
+

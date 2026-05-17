@@ -12,4 +12,6 @@ public class ProductoResponse {
     private BigDecimal precio;
     private CategoriaResponse categoria;
     private Boolean disponible;
+    private String imagenUrl;
 }
+

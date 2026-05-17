@@ -19,3 +19,4 @@ public class Rol {
     @Column(nullable = false, unique = true, length = 50)
     private String nombre;
 }
+

@@ -1,0 +1,50 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: restnova-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: restaurantedb
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Europe/Madrid
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./BACKEND
+      dockerfile: Dockerfile
+    container_name: restnova-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - TZ=Europe/Madrid
+    volumes:
+      - uploads:/app/uploads
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./FRONTEND
+      dockerfile: Dockerfile
+    container_name: restnova-frontend
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - TZ=Europe/Madrid
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:
+  uploads:

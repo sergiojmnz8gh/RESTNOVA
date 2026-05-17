@@ -40,3 +40,4 @@ public class Reserva {
         PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA
     }
 }
+

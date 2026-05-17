@@ -20,7 +20,7 @@ public class CategoriaService {
     private final CategoriaMapper categoriaMapper;
 
     public List<CategoriaResponse> getAllCategories() {
-        return categoriaRepository.findByDisponibleTrue().stream()
+        return categoriaRepository.findByDisponibleTrueOrderByOrdenAsc().stream()
                 .map(categoriaMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -28,6 +28,9 @@ public class CategoriaService {
     @Transactional
     public CategoriaResponse createCategory(CategoriaRequest request) {
         Categoria categoryEntity = categoriaMapper.toEntity(request);
+        if (categoryEntity.getOrden() == null) {
+            categoryEntity.setOrden(0);
+        }
         Categoria savedCategory = categoriaRepository.save(categoryEntity);
         return categoriaMapper.toResponseDTO(savedCategory);
     }
@@ -35,9 +38,12 @@ public class CategoriaService {
     @Transactional
     public CategoriaResponse updateCategory(Integer id, CategoriaRequest request) {
         Categoria categoryEntity = categoriaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
+                .orElseThrow(() -> new com.sje.restnova.exceptions.ResourceNotFoundException("Categoría no encontrada"));
         
         categoryEntity.setNombre(request.getNombre());
+        if (request.getOrden() != null) {
+            categoryEntity.setOrden(request.getOrden());
+        }
         Categoria savedCategory = categoriaRepository.saveAndFlush(categoryEntity);
         return categoriaMapper.toResponseDTO(savedCategory);
     }
@@ -45,12 +51,12 @@ public class CategoriaService {
     @Transactional
     public void deleteCategory(Integer id) {
         Categoria categoryEntity = categoriaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
+                .orElseThrow(() -> new com.sje.restnova.exceptions.ResourceNotFoundException("Categoría no encontrada"));
         
-        // Soft delete logic: Toggle availability
+        
         categoryEntity.setDisponible(false);
         
-        // Propagate soft delete to associated products
+        
         if (categoryEntity.getProductos() != null) {
             categoryEntity.getProductos().forEach(productEntity -> {
                 productEntity.setDisponible(false);
@@ -60,3 +66,4 @@ public class CategoriaService {
         categoriaRepository.save(categoryEntity);
     }
 }
+

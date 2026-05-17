@@ -7,8 +7,10 @@ export interface Product {
     descripcion: string;
     categoria: Category;
     disponible: boolean;
+    imagenUrl?: string;
 }
 
 export interface CartItem extends Product {
     cantidad: number;
 }
+

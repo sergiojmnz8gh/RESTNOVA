@@ -9,7 +9,9 @@ public class SesionMesaResponse {
     private Integer mesaId;
     private String camareroNombre;
     private String tokenQr;
+    private String codigoAcceso;
     private LocalDateTime fechaApertura;
     private LocalDateTime fechaCierre;
     private String numeroMesa;
 }
+

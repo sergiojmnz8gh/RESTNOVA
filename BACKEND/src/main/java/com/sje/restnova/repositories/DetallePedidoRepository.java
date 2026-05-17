@@ -8,3 +8,4 @@ import org.springframework.stereotype.Repository;
 public interface DetallePedidoRepository extends JpaRepository<DetallePedido, Integer> {
     void deleteByPedidoId(Integer pedidoId);
 }
+

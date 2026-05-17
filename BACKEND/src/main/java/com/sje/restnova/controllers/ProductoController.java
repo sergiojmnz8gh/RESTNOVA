@@ -14,10 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/productos")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
-public class ProductoController {
 
+public class ProductoController {
     private final ProductoService productoService;
+    private final com.sje.restnova.services.ImagenService imagenService;
 
     @GetMapping
     public ResponseEntity<List<ProductoResponse>> getAllProducts() {
@@ -40,4 +40,22 @@ public class ProductoController {
         productoService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<ProductoResponse>> getTopProducts() {
+        return ResponseEntity.ok(productoService.getTopSoldProducts());
+    }
+
+    @PostMapping("/{id}/imagen")
+    public ResponseEntity<ProductoResponse> uploadImage(
+            @PathVariable Integer id,
+            @RequestParam("imagen") org.springframework.web.multipart.MultipartFile imagen) {
+        
+        String url = imagenService.guardarImagenProducto(imagen, id);
+        if (url != null) {
+            return ResponseEntity.ok(productoService.updateProductImage(id, url));
+        }
+        return ResponseEntity.badRequest().build();
+    }
 }
+

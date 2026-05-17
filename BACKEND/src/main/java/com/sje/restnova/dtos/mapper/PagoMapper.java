@@ -15,7 +15,8 @@ public interface PagoMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "pedido.id", source = "pedidoId")
-    @Mapping(target = "monto", ignore = true) // Calculated in service
-    @Mapping(target = "fechaPago", ignore = true) // Set in service
+    @Mapping(target = "monto", ignore = true) 
+    @Mapping(target = "fechaPago", ignore = true) 
     Pago toEntity(PagoRequest pagoRequest);
 }
+

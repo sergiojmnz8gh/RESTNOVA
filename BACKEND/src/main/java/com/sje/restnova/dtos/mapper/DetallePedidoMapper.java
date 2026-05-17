@@ -16,7 +16,8 @@ public interface DetallePedidoMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "producto.id", source = "productoId")
-    @Mapping(target = "pedido", ignore = true) // Set in service
-    @Mapping(target = "precioUnitario", ignore = true) // Fetched in service
+    @Mapping(target = "pedido", ignore = true) 
+    @Mapping(target = "precioUnitario", ignore = true) 
     DetallePedido toEntity(DetallePedidoRequest detallePedidoRequest);
 }
+

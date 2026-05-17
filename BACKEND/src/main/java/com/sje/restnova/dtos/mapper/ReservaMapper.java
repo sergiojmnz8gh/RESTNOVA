@@ -23,3 +23,4 @@ public interface ReservaMapper {
     @Mapping(target = "usuario.id", source = "usuarioId")
     void updateReservaFromRequest(ReservaRequest request, @org.mapstruct.MappingTarget Reserva entity);
 }
+

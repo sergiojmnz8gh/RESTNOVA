@@ -22,17 +22,6 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setIsDarkMode(prev => !prev);
     };
 
-    // Aplicar el tema al documento
-    React.useEffect(() => {
-        if (isDarkMode) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('restnova_theme', 'dark');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-            localStorage.setItem('restnova_theme', 'light');
-        }
-    }, [isDarkMode]);
-
     const showToast = (title: string, message: string, variant: ToastData['variant'] = 'success') => {
         const id = Date.now();
         setToasts((prev) => [...prev, { id, title, message, variant }]);
@@ -55,10 +44,10 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     };
 
     return (
-        <UIContext.Provider value={{ showToast, showConfirm, isDarkMode, toggleDarkMode }}>
+        <UIContext.Provider value={{ showToast, showConfirm, isDarkMode, isEffectiveDarkMode: isDarkMode, toggleDarkMode }}>
             {children}
             
-            {/* Global Toast Container */}
+            {}
             <ToastContainer position="top-center" className="p-3" style={{ zIndex: 2000 }}>
                 {toasts.map((t) => (
                     <Toast key={t.id} bg={t.variant} autohide delay={3000} className="fade-in shadow-lg border-0 text-white">
@@ -70,10 +59,10 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 ))}
             </ToastContainer>
 
-            {/* Global Confirmation Modal */}
+            {}
             <Modal 
                 show={confirm.show} 
-                onHide={() => setConfirm((prev) => ({ ...prev, show: false }))}
+                onHide={handleHideConfirm} 
                 centered
                 className="fade-in"
             >
@@ -92,7 +81,7 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     )}
                 </Modal.Body>
                 <Modal.Footer className="border-0 px-4 pb-4 justify-content-center gap-3">
-                    <Button variant="light" className="px-4 py-2 fw-bold text-muted" onClick={() => setConfirm((prev) => ({ ...prev, show: false }))}>
+                    <Button variant="light" className="px-4 py-2 fw-bold text-muted" onClick={handleHideConfirm}>
                         CANCELAR
                     </Button>
                     <Button 
@@ -113,3 +102,4 @@ export const useUI = () => {
     if (!context) throw new Error('useUI must be used within UIProvider');
     return context;
 };
+

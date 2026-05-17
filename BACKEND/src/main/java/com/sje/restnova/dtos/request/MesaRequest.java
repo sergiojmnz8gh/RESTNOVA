@@ -15,3 +15,4 @@ public class MesaRequest {
     @Min(value = 1, message = "La capacidad debe ser de al menos 1")
     private Integer capacidad;
 }
+

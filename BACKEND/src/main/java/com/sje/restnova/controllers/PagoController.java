@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/pagos")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class PagoController {
 
     private final PagoService pagoService;
@@ -27,3 +27,4 @@ public class PagoController {
         return org.springframework.http.ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(response);
     }
 }
+

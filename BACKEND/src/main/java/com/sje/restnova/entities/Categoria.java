@@ -19,8 +19,11 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, unique = true)
     private String nombre;
+
+    @Column(nullable = false)
+    private Integer orden = 0;
 
     @Column(nullable = false)
     private Boolean disponible = true;

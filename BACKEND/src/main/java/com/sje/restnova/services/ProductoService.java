@@ -23,7 +23,7 @@ public class ProductoService {
     private final ProductoMapper productoMapper;
 
     public List<ProductoResponse> getAllProducts() {
-        return productoRepository.findByDisponibleTrue().stream()
+        return productoRepository.findByActivoTrue().stream()
                 .map(productoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -56,7 +56,16 @@ public class ProductoService {
         productoMapper.updateProductoFromRequest(request, productEntity);
         productEntity.setCategoria(categoryEntity);
         
-        // saveAndFlush ensures changes are committed before the response is sent back
+        
+        Producto savedProduct = productoRepository.saveAndFlush(productEntity);
+        return productoMapper.toResponseDTO(savedProduct);
+    }
+
+    @Transactional
+    public ProductoResponse updateProductImage(Integer id, String imagenUrl) {
+        Producto productEntity = productoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Producto con ID " + id + " no encontrado"));
+        productEntity.setImagenUrl(imagenUrl);
         Producto savedProduct = productoRepository.saveAndFlush(productEntity);
         return productoMapper.toResponseDTO(savedProduct);
     }
@@ -64,9 +73,16 @@ public class ProductoService {
     @Transactional
     public void deleteProduct(Integer id) {
         Producto productEntity = productoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-        // Soft delete logic: Toggle availability
-        productEntity.setDisponible(false);
+                .orElseThrow(() -> new com.sje.restnova.exceptions.ResourceNotFoundException("Producto no encontrado"));
+        
+        productEntity.setActivo(false);
         productoRepository.save(productEntity);
     }
+
+    public List<ProductoResponse> getTopSoldProducts() {
+        return productoRepository.findTop3MostSold().stream()
+                .map(productoMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 }
+

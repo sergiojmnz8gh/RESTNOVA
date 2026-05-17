@@ -29,9 +29,13 @@ public class SesionMesa {
     @Column(name = "token_qr", length = 255)
     private String tokenQr;
 
+    @Column(name = "codigo_acceso", length = 6)
+    private String codigoAcceso;
+
     @Column(name = "fecha_apertura", nullable = false)
     private LocalDateTime fechaApertura;
 
     @Column(name = "fecha_cierre")
     private LocalDateTime fechaCierre;
 }
+

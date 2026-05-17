@@ -2,7 +2,7 @@ package com.sje.restnova.dtos.request;
 
 import com.sje.restnova.entities.Reserva.EstadoReserva;
 
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,7 +17,7 @@ public class ReservaRequest {
     private Integer usuarioId;
 
     @NotNull(message = "La fecha es obligatoria")
-    @Future(message = "La fecha de reserva debe ser en el futuro")
+    @FutureOrPresent(message = "La fecha de reserva debe ser de hoy o en adelante")
     private LocalDate fecha;
 
     @NotNull(message = "La hora es obligatoria")
@@ -29,3 +29,4 @@ public class ReservaRequest {
 
     private EstadoReserva estado;
 }
+

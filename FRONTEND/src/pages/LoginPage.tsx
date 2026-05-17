@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Form, InputGroup, Row, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { ErrorToast, SuccessToast } from '../components/common/Toasts';
+import { ErrorToast, SuccessToast } from '../components/Toasts';
 import { useAuth } from '../context/AuthContext';
 import { ROUTES } from '../routes/routes';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const LoginPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -17,13 +18,11 @@ export const LoginPage: React.FC = () => {
         type: 'success'
     });
 
-    const { login } = useAuth();
+    const { login, loginWithGoogle } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Forzar tema claro en el login sin importar la preferencia global
-        const originalTheme = document.documentElement.getAttribute('data-theme');
-        document.documentElement.setAttribute('data-theme', 'light');
+        document.body.classList.add('force-light-theme');
         
         const rememberedEmail = localStorage.getItem('rememberedEmail');
         if (rememberedEmail) {
@@ -32,12 +31,7 @@ export const LoginPage: React.FC = () => {
         }
 
         return () => {
-            // Restaurar tema original al salir del login
-            if (originalTheme) {
-                document.documentElement.setAttribute('data-theme', originalTheme);
-            } else {
-                document.documentElement.removeAttribute('data-theme');
-            }
+            document.body.classList.remove('force-light-theme');
         };
     }, []);
 
@@ -69,26 +63,55 @@ export const LoginPage: React.FC = () => {
         }
     };
 
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+        if (!credentialResponse.credential) return;
+        setLoading(true);
+        try {
+            await loginWithGoogle(credentialResponse.credential);
+            setToast({ show: true, message: '¡Sesión iniciada con Google!', type: 'success' });
+            
+            const pendingToken = localStorage.getItem('pendingTableToken');
+            if (pendingToken) {
+                localStorage.removeItem('pendingTableToken');
+                setTimeout(() => navigate(`/pedido-cliente/${pendingToken}`), 1200);
+            } else {
+                setTimeout(() => navigate(ROUTES.DASHBOARD), 1200);
+            }
+        } catch (error) {
+            setToast({ show: true, message: 'Error al iniciar sesión con Google.', type: 'error' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div className="login-wrapper" style={{ backgroundImage: `url('/login-bg.png')` }} data-theme="light">
+        <div className="login-wrapper d-flex align-items-center justify-content-center" style={{ backgroundImage: `url('/login-bg.png')`, minHeight: '100vh' }} data-theme="light">
             <Container>
                 <Row className="justify-content-center">
-                    <Col md={10} lg={8} xl={5}>
-                        <Card className="racing-card fade-in bg-white border-0 shadow-lg" style={{ minHeight: '650px' }}>
-                            <Card.Body className="p-4 p-md-5 d-flex flex-column justify-content-center">
-                                <div className="text-center mb-5">
-                                    <div className="d-flex justify-content-center mb-4">
-                                        <img src="/logo_navy.png" alt="Restnova Logo" style={{ height: '140px', width: 'auto' }} />
+                    <Col md={8} lg={6} xl={4}>
+                        <Card className="racing-card fade-in bg-white border-0 shadow-lg position-relative">
+                            <Card.Body className="p-3 p-md-4 d-flex flex-column justify-content-center">
+                                <Button 
+                                    variant="link" 
+                                    className="position-absolute top-0 start-0 m-3 text-primary p-0 shadow-none hover-grow"
+                                    onClick={() => navigate(ROUTES.LANDING)}
+                                    title="Volver al inicio"
+                                >
+                                    <i className="bi bi-arrow-left-circle fs-3"></i>
+                                </Button>
+                                <div className="text-center mb-4">
+                                    <div className="d-flex justify-content-center mb-3">
+                                        <img src="/logo_navy.png" alt="Restnova Logo" style={{ height: '70px', width: 'auto' }} />
                                     </div>
                                     <div className="d-flex align-items-center justify-content-center gap-3">
                                         <div className="flex-grow-1 border-top border-2" style={{ borderColor: '#E79E0A' }}></div>
-                                        <span className="small fw-bold text-primary" style={{ fontSize: '0.8rem', letterSpacing: '3px' }}>FUTURE STARTS NOW</span>
+                                        <span className="small fw-bold text-primary" style={{ fontSize: '0.75rem', letterSpacing: '3px' }}>EL FUTURO COMIENZA AHORA</span>
                                         <div className="flex-grow-1 border-top border-2" style={{ borderColor: '#E79E0A' }}></div>
                                     </div>
                                 </div>
 
                                 <Form onSubmit={handleLogin}>
-                                    <Form.Group className="mb-4" controlId="formBasicEmail">
+                                    <Form.Group className="mb-3" controlId="formBasicEmail">
                                         <Form.Label className="small fw-bold text-primary text-uppercase" style={{ fontSize: '0.85rem' }}>Correo Electrónico</Form.Label>
                                         <Form.Control
                                             type="email"
@@ -96,44 +119,44 @@ export const LoginPage: React.FC = () => {
                                             value={email}
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                                             required
-                                            className="bg-light border-0 py-3 text-dark fw-bold italic"
+                                            className="bg-light border-0 py-2 text-dark fw-bold rounded-3"
                                         />
                                     </Form.Group>
 
-                                    <Form.Group className="mb-4" controlId="formBasicPassword">
+                                    <Form.Group className="mb-3" controlId="formBasicPassword">
                                         <Form.Label className="small fw-bold text-primary text-uppercase" style={{ fontSize: '0.85rem' }}>Contraseña</Form.Label>
-                                        <InputGroup>
+                                        <InputGroup className="bg-light rounded-3 overflow-hidden">
                                             <Form.Control
                                                 type={showPassword ? "text" : "password"}
                                                 placeholder="••••••••"
                                                 value={password}
                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                                                 required
-                                                className="bg-light border-0 py-3 text-dark fw-bold italic"
+                                                className="bg-transparent border-0 py-2 text-dark fw-bold shadow-none"
                                             />
                                             <Button
-                                                variant="light"
+                                                variant="link"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="bg-light text-muted border-0 px-3"
+                                                className="text-muted border-0 px-3 shadow-none"
                                             >
                                                 <i className={`bi bi-eye${showPassword ? '-slash' : ''}`}></i>
                                             </Button>
                                         </InputGroup>
                                     </Form.Group>
 
-                                    <div className="mb-5">
+                                    <div className="mb-4">
                                         <Form.Check
                                             type="checkbox"
                                             label="Recordar sesión"
                                             checked={rememberMe}
                                             onChange={(e) => setRememberMe(e.target.checked)}
-                                            className="small text-muted fw-bold italic fs-6"
+                                            className="small text-muted fw-bold"
                                         />
                                     </div>
 
                                     <Button
                                         type="submit"
-                                        className="w-100 btn-primary py-3 fw-bold fs-4 shadow-sm italic"
+                                        className="w-100 btn-primary py-2 fw-bold fs-5 shadow-sm"
                                         disabled={loading}
                                     >
                                         {loading ? (
@@ -142,9 +165,29 @@ export const LoginPage: React.FC = () => {
                                     </Button>
                                 </Form>
 
-                                <div className="text-center mt-5 pt-3">
-                                    <p className="small text-muted fw-bold mb-0 italic fs-6">
-                                        ¿Nuevo en RESTNOVA? <Button variant="link" className="text-primary text-decoration-none fw-bold p-0 ms-1 italic fs-6" onClick={() => navigate(ROUTES.REGISTER)}>Crear Cuenta</Button>
+                                <div className="mt-4">
+                                    <div className="d-flex align-items-center mb-4">
+                                        <div className="flex-grow-1 border-bottom opacity-10"></div>
+                                        <span className="mx-3 text-muted small fw-bold text-uppercase" style={{ letterSpacing: '1px' }}>O INICIAR CON GOOGLE</span>
+                                        <div className="flex-grow-1 border-bottom opacity-10"></div>
+                                    </div>
+                                    <div className="d-flex justify-content-center">
+                                        <GoogleLogin
+                                            onSuccess={handleGoogleSuccess}
+                                            onError={() => {
+                                                setToast({ show: true, message: 'Fallo al conectar con Google', type: 'error' });
+                                            }}
+                                            theme="filled_blue"
+                                            shape="pill"
+                                            size="large"
+                                            text="signin_with"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="text-center mt-4 pt-2">
+                                    <p className="small text-muted fw-bold mb-0">
+                                        ¿Nuevo en RESTNOVA? <Button variant="link" className="text-primary text-decoration-none fw-bold p-0 ms-1" onClick={() => navigate(ROUTES.REGISTER)}>Crear Cuenta</Button>
                                     </p>
                                 </div>
                             </Card.Body>
@@ -153,7 +196,7 @@ export const LoginPage: React.FC = () => {
                 </Row>
             </Container>
 
-            {/* Notifications */}
+            {}
             {toast.show && (
                 toast.type === 'success' ? (
                     <SuccessToast
@@ -172,3 +215,4 @@ export const LoginPage: React.FC = () => {
         </div>
     );
 };
+

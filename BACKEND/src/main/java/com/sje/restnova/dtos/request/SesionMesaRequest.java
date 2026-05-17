@@ -12,3 +12,4 @@ public class SesionMesaRequest {
     @NotNull(message = "El ID del camarero es obligatorio")
     private Integer camareroId;
 }
+

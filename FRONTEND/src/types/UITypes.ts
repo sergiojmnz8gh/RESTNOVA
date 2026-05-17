@@ -17,6 +17,7 @@ export interface UIContextType {
     showToast: (title: string, message: string, variant?: ToastData['variant']) => void;
     showConfirm: (title: string, message: string, onConfirm: () => void, isDelete?: boolean) => void;
     isDarkMode: boolean;
+    isEffectiveDarkMode: boolean;
     toggleDarkMode: () => void;
 }
 
@@ -39,3 +40,4 @@ export interface ModalProps {
     cancelText?: string;
     variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
 }
+

@@ -34,6 +34,10 @@ public class Pedido {
     @Column(nullable = false, length = 20)
     private EstadoPedido estado;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "metodo_pago", length = 20)
+    private MetodoPago metodoPago;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal total = BigDecimal.ZERO;
 
@@ -41,6 +45,11 @@ public class Pedido {
     private java.util.List<DetallePedido> detalles = new java.util.ArrayList<>();
 
     public enum EstadoPedido {
-        PENDIENTE, PAGADO, PENDIENTE_PAGO, EN_PREPARACION, LISTO, ENTREGADO, CANCELADO
+        PENDIENTE, EN_PREPARACION, LISTO_PARA_SERVIR, SERVIDO, CANCELADO, PAGADO, PENDIENTE_PAGO
+    }
+
+    public enum MetodoPago {
+        TARJETA, EFECTIVO, WEB
     }
 }
+

@@ -1,10 +1,8 @@
 import { Modal, Button } from 'react-bootstrap';
 
-import type { ModalProps } from '../../types/UITypes';
+import type { ModalProps } from '../types/UITypes';
 
-/**
- * Global Alert Modal for simple messages using React-Bootstrap.
- */
+
 export const AlertModal: React.FC<Omit<ModalProps, 'onConfirm' | 'confirmText'>> = ({
     show,
     title,
@@ -28,9 +26,7 @@ export const AlertModal: React.FC<Omit<ModalProps, 'onConfirm' | 'confirmText'>>
     </Modal>
 );
 
-/**
- * Global Confirm Modal for actions that require user confirmation using React-Bootstrap.
- */
+
 export const ConfirmModal: React.FC<ModalProps> = ({
     show,
     title,
@@ -58,3 +54,4 @@ export const ConfirmModal: React.FC<ModalProps> = ({
         </Modal.Footer>
     </Modal>
 );
+

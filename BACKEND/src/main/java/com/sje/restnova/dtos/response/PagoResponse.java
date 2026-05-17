@@ -12,3 +12,4 @@ public class PagoResponse {
     private LocalDateTime fechaPago;
     private String metodoPago;
 }
+

@@ -33,4 +33,11 @@ public class Producto {
 
     @Column(nullable = false)
     private Boolean disponible = true;
+
+    @Column(nullable = false)
+    private Boolean activo = true;
+
+    @Column(length = 255)
+    private String imagenUrl;
 }
+

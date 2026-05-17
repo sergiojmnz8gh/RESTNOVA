@@ -1,17 +1,12 @@
-import axios from 'axios';
-import type { LoginRequest, TokenResponse } from '../types/AuthTypes';
-import { API_ENDPOINTS } from './apis';
+import api from './apiConfig';
+import type { LoginRequest, RegisterRequest, TokenResponse } from '../types/AuthTypes';
 
-/**
- * Service to handle all authentication related operations.
- */
+
 export const authService = {
-    /**
-     * Performs a login request.
-     */
+    
     login: async (credentials: LoginRequest): Promise<TokenResponse> => {
         try {
-            const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
+            const response = await api.post('/auth/login', credentials);
             return response.data;
         } catch (error) {
             console.error('Error in login service:', error);
@@ -19,12 +14,20 @@ export const authService = {
         }
     },
 
-    /**
-     * Performs a registration request.
-     */
+    googleLogin: async (credential: string): Promise<TokenResponse> => {
+        try {
+            const response = await api.post('/auth/google', { credential });
+            return response.data;
+        } catch (error) {
+            console.error('Error in google login service:', error);
+            throw error;
+        }
+    },
+
+    
     register: async (data: RegisterRequest): Promise<TokenResponse> => {
         try {
-            const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, data);
+            const response = await api.post('/auth/registro', data);
             return response.data;
         } catch (error) {
             console.error('Error in register service:', error);
@@ -32,9 +35,7 @@ export const authService = {
         }
     },
 
-    /**
-     * Helper to parse JWT (basic implementation)
-     */
+    
     parseToken: (token: string) => {
         try {
             return JSON.parse(atob(token.split('.')[1]));
@@ -43,3 +44,4 @@ export const authService = {
         }
     }
 };
+

@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class AuthController {
 
     private final AuthService authService;
@@ -33,8 +33,6 @@ public class AuthController {
     private final com.sje.restnova.dtos.mapper.UsuarioMapper usuarioMapper;
 
     @PostMapping("/registro")
-    // @PreAuthorize("hasRole('ADMIN')") // Descomentar cuando la seguridad esté
-    // probada para limitar el registro
     public ResponseEntity<TokenResponse> register(@RequestBody @Valid UsuarioRequest request) {
         Usuario usuario = authService.registrarUsuario(request);
         String token = jwtService.generateToken(usuario);
@@ -51,4 +49,17 @@ public class AuthController {
 
         return ResponseEntity.ok(new TokenResponse(token, usuarioMapper.toResponseDTO(usuario)));
     }
+
+    @PostMapping("/google")
+    public ResponseEntity<TokenResponse> googleLogin(@RequestBody java.util.Map<String, String> body) {
+        try {
+            String credential = body.get("credential");
+            Usuario usuario = authService.processGoogleLogin(credential);
+            String token = jwtService.generateToken(usuario);
+            return ResponseEntity.ok(new TokenResponse(token, usuarioMapper.toResponseDTO(usuario)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 }
+

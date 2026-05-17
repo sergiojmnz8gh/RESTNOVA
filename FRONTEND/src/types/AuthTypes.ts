@@ -19,6 +19,8 @@ export interface TokenResponse {
         email: string;
         nombre: string;
         rolNombre: string;
+        imagenUrl?: string;
+        puntosAcumulados?: number;
     };
 }
 
@@ -27,6 +29,10 @@ export interface User {
     email: string;
     nombre: string;
     rol: string;
+    apellidos?: string;
+    telefono?: string;
+    imagenUrl?: string;
+    puntosAcumulados?: number;
 }
 
 export interface AuthContextType {
@@ -34,7 +40,10 @@ export interface AuthContextType {
     token: string | null;
     isAuthenticated: boolean;
     login: (credentials: LoginRequest, rememberMe: boolean) => Promise<void>;
+    loginWithGoogle: (credential: string) => Promise<void>;
     register: (data: RegisterRequest) => Promise<void>;
     logout: () => void;
+    updateUser: (usuarioData: any) => void;
     loading: boolean;
 }
+

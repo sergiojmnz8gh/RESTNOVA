@@ -17,15 +17,16 @@ public class SesionMesaService {
     private final SesionMesaMapper mapper;
     private final com.sje.restnova.repositories.PedidoRepository pedidoRepository;
 
-    public List<SesionMesaResponse> getAllSessions() {
-        return repository.findAll().stream()
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public java.util.List<com.sje.restnova.dtos.response.SesionMesaResponse> getAllSessions() {
+        return repository.findAllWithRelations().stream()
                 .map(mapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public SesionMesaResponse findByToken(String token) {
         com.sje.restnova.entities.SesionMesa sessionEntity = repository.findByTokenQr(token)
-                .orElseThrow(() -> new IllegalArgumentException("Sesión no válida o expirada"));
+                .orElseThrow(() -> new com.sje.restnova.exceptions.ResourceNotFoundException("Sesión no válida o expirada"));
         if (sessionEntity.getFechaCierre() != null) {
             throw new IllegalArgumentException("Esta sesión ya ha sido cerrada");
         }
@@ -34,9 +35,22 @@ public class SesionMesaService {
 
     @org.springframework.transaction.annotation.Transactional
     public SesionMesaResponse createSession(com.sje.restnova.dtos.request.SesionMesaRequest request) {
+        
+        repository.findActiveByMesaId(request.getMesaId()).ifPresent(s -> {
+            throw new IllegalStateException("Ya existe una sesión activa para esta mesa");
+        });
+
         com.sje.restnova.entities.SesionMesa sessionEntity = mapper.toEntity(request);
         sessionEntity.setFechaApertura(java.time.LocalDateTime.now());
-        sessionEntity.setTokenQr(java.util.UUID.randomUUID().toString());
+        
+        
+        String shortToken;
+        do {
+            shortToken = java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        } while (repository.findByTokenQr(shortToken).isPresent());
+        
+        sessionEntity.setTokenQr(shortToken);
+        sessionEntity.setCodigoAcceso(shortToken); 
         com.sje.restnova.entities.SesionMesa savedSession = repository.save(sessionEntity);
         return mapper.toResponseDTO(savedSession);
     }
@@ -44,15 +58,16 @@ public class SesionMesaService {
     @org.springframework.transaction.annotation.Transactional
     public SesionMesaResponse closeSession(Integer id) {
         com.sje.restnova.entities.SesionMesa sessionEntity = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Sesión no encontrada"));
+                .orElseThrow(() -> new com.sje.restnova.exceptions.ResourceNotFoundException("Sesión no encontrada"));
         
-        // Bloquear cierre si hay pedidos pendientes de pago
+        
         boolean hasPendingOrders = pedidoRepository.existsBySesionMesaIdAndEstadoIn(id, 
                 java.util.List.of(com.sje.restnova.entities.Pedido.EstadoPedido.PENDIENTE, 
-                             com.sje.restnova.entities.Pedido.EstadoPedido.PENDIENTE_PAGO));
+                             com.sje.restnova.entities.Pedido.EstadoPedido.EN_PREPARACION,
+                             com.sje.restnova.entities.Pedido.EstadoPedido.LISTO_PARA_SERVIR));
         
         if (hasPendingOrders) {
-            throw new IllegalStateException("No se puede cerrar la mesa. Hay pedidos pendientes de pago.");
+            throw new IllegalStateException("No se puede cerrar la mesa. Hay platos pendientes de servir.");
         }
 
         sessionEntity.setFechaCierre(java.time.LocalDateTime.now());
@@ -62,8 +77,9 @@ public class SesionMesaService {
     @org.springframework.transaction.annotation.Transactional
     public void deleteSession(Integer id) {
         if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Sesión no encontrada");
+            throw new com.sje.restnova.exceptions.ResourceNotFoundException("Sesión no encontrada");
         }
         repository.deleteById(id);
     }
 }
+

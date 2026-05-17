@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     boolean existsBySesionMesaIdAndEstadoIn(Integer sesionMesaId, List<Pedido.EstadoPedido> estados);
+    List<Pedido> findAllBySesionMesaId(Integer sesionMesaId);
 }
+
