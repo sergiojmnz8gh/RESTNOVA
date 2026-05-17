@@ -31,6 +31,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         id: usuario.id,
         email: usuario.email,
         nombre: usuario.nombre,
+        apellidos: usuario.apellidos,
+        telefono: usuario.telefono,
         rol: usuario.rolNombre,
         imagenUrl: usuario.imagenUrl,
         puntosAcumulados: usuario.puntosAcumulados
@@ -72,6 +74,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(userData));
+            return userData;
         } catch (error) {
             throw error;
         }

@@ -30,5 +30,9 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
     java.util.List<Reserva> findByUsuarioIdWithRelations(@Param("usuarioId") Integer usuarioId);
 
     java.util.List<Reserva> findByUsuarioId(Integer usuarioId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM Reserva r WHERE r.usuario.id = :usuarioId")
+    void deleteByUsuarioId(@org.springframework.data.repository.query.Param("usuarioId") Integer usuarioId);
 }
 

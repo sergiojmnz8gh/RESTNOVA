@@ -227,12 +227,18 @@ export const LandingPage: React.FC = () => {
                                             }}
                                         />
                                     </div>
-                                    <Card.Body className="p-4">
-                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <h4 className="fw-bold text-primary text-uppercase mb-0" style={{ color: 'var(--color-primary)' }}>{dish.title}</h4>
-                                            <span className="text-accent fw-bold fs-5">{dish.price}</span>
+                                    <Card.Body className="p-4 d-flex flex-column justify-content-between h-100">
+                                        <div className="d-flex flex-column flex-grow-1">
+                                            <h4 className="fw-bold text-primary text-uppercase mb-2 text-center d-flex align-items-center justify-content-center" style={{ color: 'var(--color-primary)', fontSize: '1.2rem', minHeight: '54px' }}>
+                                                {dish.title}
+                                            </h4>
+                                            <div className="text-accent fw-bold fs-5 mb-3 text-center">
+                                                {dish.price}
+                                            </div>
+                                            <p className="text-secondary small mb-0 text-center flex-grow-1" style={{ fontWeight: '500', color: 'var(--color-text-muted)' }}>
+                                                {dish.description}
+                                            </p>
                                         </div>
-                                        <p className="text-secondary small mb-0" style={{ fontWeight: '500', color: 'var(--color-text-muted)' }}>{dish.description}</p>
                                     </Card.Body>
                                 </Card>
                             </Col>

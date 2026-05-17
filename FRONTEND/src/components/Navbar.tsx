@@ -90,7 +90,8 @@ export const Navbar: React.FC<NavbarProps> = ({ transparentInitially = false }) 
                                 <Nav.Link 
                                     as={Link} 
                                     to={ROUTES.PERFIL} 
-                                    className="user-nav-item d-flex align-items-center gap-3 border-start border-white border-opacity-10 ps-4 ms-2 nav-link-custom py-0"
+                                    className="user-nav-item d-flex align-items-center gap-3 border-start border-white border-opacity-10 ps-4 ms-2 py-0 text-white text-decoration-none"
+                                    style={{ opacity: 0.85 }}
                                 >
                                     <div className="position-relative">
                                         {user?.imagenUrl ? (

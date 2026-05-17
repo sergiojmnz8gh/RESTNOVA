@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class MesaService {
 
     private final MesaRepository mesaRepository;
+    private final com.sje.restnova.repositories.SesionMesaRepository sesionMesaRepository;
     private final MesaMapper mesaMapper;
 
     public List<MesaResponse> getAllTables() {
@@ -37,6 +38,10 @@ public class MesaService {
         Mesa tableEntity = mesaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Mesa no encontrada"));
         
+        if (sesionMesaRepository.findActiveByMesaId(id).isPresent()) {
+            throw new IllegalStateException("No se puede modificar una mesa con una sesión activa");
+        }
+        
         tableEntity.setNumeroMesa(request.getNumeroMesa());
         tableEntity.setCapacidad(request.getCapacidad());
         
@@ -48,6 +53,9 @@ public class MesaService {
     public void deleteTable(Integer id) {
         if (!mesaRepository.existsById(id)) {
             throw new com.sje.restnova.exceptions.ResourceNotFoundException("Mesa no encontrada");
+        }
+        if (sesionMesaRepository.findActiveByMesaId(id).isPresent()) {
+            throw new IllegalStateException("No se puede eliminar una mesa con una sesión activa");
         }
         mesaRepository.deleteById(id);
     }

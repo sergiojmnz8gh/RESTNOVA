@@ -15,5 +15,9 @@ public interface SesionMesaRepository extends JpaRepository<SesionMesa, Integer>
 
     @org.springframework.data.jpa.repository.Query("SELECT s FROM SesionMesa s WHERE s.mesa.id = :mesaId AND s.fechaCierre IS NULL")
     Optional<SesionMesa> findActiveByMesaId(@org.springframework.data.repository.query.Param("mesaId") Integer mesaId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM SesionMesa s WHERE s.camarero.id = :camareroId")
+    void deleteByCamareroId(@org.springframework.data.repository.query.Param("camareroId") Integer camareroId);
 }
 

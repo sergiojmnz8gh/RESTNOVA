@@ -21,6 +21,8 @@ export const ProfilePage: React.FC = () => {
     const [previewImage, setPreviewImage] = useState<string | null>(
         user?.imagenUrl ? (user.imagenUrl.startsWith('http') ? user.imagenUrl : `http://localhost:8080${user.imagenUrl}`) : null
     );
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -213,24 +215,46 @@ export const ProfilePage: React.FC = () => {
                                     <Col md={6}>
                                         <Form.Group>
                                             <Form.Label className="small fw-bold text-muted text-uppercase">Nueva Contraseña</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                className="bg-light border-0 py-3"
-                                                placeholder="Dejar en blanco para mantener"
-                                                value={formData.password}
-                                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                            />
+                                            <div className="input-group">
+                                                <Form.Control
+                                                    type={showPassword ? "text" : "password"}
+                                                    className="bg-light border-0 py-3"
+                                                    placeholder="Dejar en blanco para mantener"
+                                                    value={formData.password}
+                                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                                    style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+                                                />
+                                                <Button 
+                                                    variant="light" 
+                                                    className="bg-light border-0 px-3 d-flex align-items-center"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+                                                >
+                                                    <i className={`bi bi-eye${showPassword ? '-slash' : ''} text-muted`}></i>
+                                                </Button>
+                                            </div>
                                         </Form.Group>
                                     </Col>
                                     <Col md={6}>
                                         <Form.Group>
                                             <Form.Label className="small fw-bold text-muted text-uppercase">Confirmar Contraseña</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                className="bg-light border-0 py-3"
-                                                value={formData.confirmPassword}
-                                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                            />
+                                            <div className="input-group">
+                                                <Form.Control
+                                                    type={showConfirmPassword ? "text" : "password"}
+                                                    className="bg-light border-0 py-3"
+                                                    value={formData.confirmPassword}
+                                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                                    style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+                                                />
+                                                <Button 
+                                                    variant="light" 
+                                                    className="bg-light border-0 px-3 d-flex align-items-center"
+                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                    style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+                                                >
+                                                    <i className={`bi bi-eye${showConfirmPassword ? '-slash' : ''} text-muted`}></i>
+                                                </Button>
+                                            </div>
                                         </Form.Group>
                                     </Col>
 

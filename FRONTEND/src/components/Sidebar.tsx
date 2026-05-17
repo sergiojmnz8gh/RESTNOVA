@@ -235,36 +235,51 @@ export const DesktopSidebar: React.FC = () => {
 
             {}
             <div className={`sidebar d-none d-md-flex flex-column transition-all ${collapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
-                <div className={`d-flex align-items-center justify-content-center p-3 border-bottom border-white border-opacity-10 py-4 position-relative`}>
-                    <Link to={ROUTES.DASHBOARD} className="d-flex align-items-center text-decoration-none">
-                        <img 
-                            src="/logo_white.png" 
-                            alt="Restnova" 
-                            style={{ 
-                                height: collapsed ? '30px' : '45px', 
-                                transition: 'all 0.3s ease',
-                                filter: 'drop-shadow(0 0 8px rgba(231, 158, 10, 0.3))'
-                            }} 
-                        />
-                    </Link>
-                    {!collapsed && (
-                        <Button 
-                            variant="link" 
-                            className="text-white p-0 shadow-none opacity-50 hover-opacity-100 position-absolute end-0 me-3" 
-                            onClick={() => setCollapsed(true)}
-                        >
-                            <i className="bi bi-chevron-left fs-5"></i>
-                        </Button>
-                    )}
-                    {collapsed && (
-                        <div className="position-absolute" style={{ right: '-15px', zIndex: 1100 }}>
+                <div className={`d-flex flex-column align-items-center justify-content-center p-3 border-bottom border-white border-opacity-10 py-4 gap-3`}>
+                    {collapsed ? (
+                        <div className="d-flex flex-column align-items-center gap-2">
+                            <Link to={ROUTES.DASHBOARD} className="d-flex align-items-center text-decoration-none">
+                                <img 
+                                    src="/favicon.png" 
+                                    alt="Restnova" 
+                                    style={{ 
+                                        height: '40px', 
+                                        width: '40px',
+                                        objectFit: 'contain',
+                                        filter: 'drop-shadow(0 0 8px rgba(231, 158, 10, 0.3))'
+                                    }} 
+                                    className="fade-in"
+                                />
+                            </Link>
                             <Button 
-                                variant="accent" 
-                                className="rounded-circle p-1 shadow-sm border-0" 
-                                style={{ width: '30px', height: '30px' }}
+                                variant="link" 
+                                className="text-white p-0 shadow-none opacity-50 hover-opacity-100 mt-2" 
                                 onClick={() => setCollapsed(false)}
+                                title="Expandir menú"
                             >
-                                <i className="bi bi-chevron-right text-primary tiny"></i>
+                                <i className="bi bi-chevron-right fs-5"></i>
+                            </Button>
+                        </div>
+                    ) : (
+                        <div className="d-flex align-items-center justify-content-between w-100 position-relative px-2">
+                            <Link to={ROUTES.DASHBOARD} className="d-flex align-items-center text-decoration-none">
+                                <img 
+                                    src="/logo_white.png" 
+                                    alt="Restnova" 
+                                    style={{ 
+                                        height: '45px', 
+                                        filter: 'drop-shadow(0 0 8px rgba(231, 158, 10, 0.3))'
+                                    }} 
+                                    className="fade-in"
+                                />
+                            </Link>
+                            <Button 
+                                variant="link" 
+                                className="text-white p-0 shadow-none opacity-50 hover-opacity-100" 
+                                onClick={() => setCollapsed(true)}
+                                title="Contraer menú"
+                            >
+                                <i className="bi bi-chevron-left fs-5"></i>
                             </Button>
                         </div>
                     )}
@@ -274,7 +289,6 @@ export const DesktopSidebar: React.FC = () => {
                     {navLinks}
                 </div>
 
-                {}
                 <div className="mt-auto p-2 border-top border-white border-opacity-10 py-3 bg-black bg-opacity-10">
                     <div className={`d-flex ${collapsed ? 'flex-column' : 'flex-row'} align-items-center justify-content-center gap-2`}>
                         <Button 
@@ -282,23 +296,25 @@ export const DesktopSidebar: React.FC = () => {
                             onClick={toggleDarkMode} 
                             className="text-white p-2 shadow-none hover-bg-light rounded-3 d-flex align-items-center justify-content-center m-0"
                             title={isDarkMode ? 'Modo Día' : 'Modo Noche'}
-                            style={{ width: collapsed ? '100%' : '45px', height: '45px' }}
+                            style={{ width: '45px', height: '45px' }}
                         >
                             <i className={`bi bi-${isDarkMode ? 'sun-fill text-warning' : 'moon-stars-fill'} fs-5`}></i>
                         </Button>
 
                         <div 
                             onClick={handleLogout} 
-                            className="nav-item-clean cursor-pointer rounded-3 d-flex align-items-center justify-content-center p-2 m-0 bg-danger bg-opacity-10"
+                            className="cursor-pointer rounded-3 d-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger hover-bg-danger-opacity"
                             style={{ 
                                 cursor: 'pointer', 
-                                width: collapsed ? '45px' : 'auto',
+                                width: collapsed ? '45px' : '100%',
                                 height: '45px',
-                                flexGrow: collapsed ? 0 : 1
+                                transition: 'all 0.2s ease',
+                                border: '1px solid rgba(239, 68, 68, 0.2)'
                             }}
+                            title="Salir"
                         >
-                            <i className="bi bi-box-arrow-right text-danger m-0"></i>
-                            {!collapsed && <span className="ms-2 text-uppercase tiny fw-bold text-danger">Salir</span>}
+                            <i className="bi bi-box-arrow-right fs-5"></i>
+                            {!collapsed && <span className="ms-2 text-uppercase tiny fw-bold">Salir</span>}
                         </div>
                     </div>
                 </div>

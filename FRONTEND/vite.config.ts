@@ -14,6 +14,10 @@ export default defineConfig({
       '/productos': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+      },
+      '/usuarios': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
       }
     }
   }

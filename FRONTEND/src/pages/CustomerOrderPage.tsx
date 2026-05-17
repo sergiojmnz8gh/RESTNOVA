@@ -122,22 +122,6 @@ export const CustomerOrderPage: React.FC = () => {
         }
     };
 
-    const handleCallWaiter = async () => {
-        try {
-            await fetch('/api/notificaciones', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    mensaje: `¡ATENCIÓN! La Mesa ${session?.numeroMesa} solicita asistencia.`,
-                    tipo: 'LLAMAR_CAMARERO',
-                    mesa: { id: session?.mesaId }
-                })
-            });
-            showToast('Aviso', 'El personal ha sido notificado y acudirá a su mesa', 'info');
-        } catch (error) {
-            showToast('Error', 'No se pudo avisar al personal', 'danger');
-        }
-    };
 
     if (loading || !session) {
         return (
@@ -202,11 +186,11 @@ export const CustomerOrderPage: React.FC = () => {
                                             </div>
                                             <Button 
                                                 variant="primary" 
-                                                className="rounded-circle p-0 shadow-none flex-shrink-0 align-self-end mt-auto mt-md-0"
+                                                className="rounded-circle p-0 shadow-none flex-shrink-0 d-flex align-items-center justify-content-center align-self-end mt-auto mt-md-0"
                                                 onClick={() => addToCart(p)}
-                                                style={{ width: '45px', height: '45px' }}
+                                                style={{ width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', backgroundColor: 'var(--color-accent)', borderColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
                                             >
-                                                <i className="bi bi-plus-lg fs-4"></i>
+                                                <i className="bi bi-plus-lg" style={{ fontSize: '1rem', fontWeight: 'bold' }}></i>
                                             </Button>
                                         </Card.Body>
                                     </Card>
@@ -217,7 +201,7 @@ export const CustomerOrderPage: React.FC = () => {
 
                     {}
                     <Col lg={4}>
-                        <div className="sticky-top" style={{ top: '100px' }}>
+                        <div className="sticky-top" style={{ position: 'sticky', top: '90px', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto', paddingRight: '4px' }}>
                             <Card className="border-0 shadow-premium p-4 rounded-4">
                                 <h3 className="h5 fw-bold mb-4 d-flex align-items-center gap-2 text-primary text-uppercase tracking-widest">
                                     <i className="bi bi-cart3"></i>
@@ -337,15 +321,7 @@ export const CustomerOrderPage: React.FC = () => {
                 </Row>
             </Container>
 
-            {}
-            <Button 
-                variant="accent" 
-                className="position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg p-0 d-flex align-items-center justify-content-center transition-all hover-scale"
-                style={{ width: '70px', height: '70px', zIndex: 1000 }}
-                onClick={handleCallWaiter}
-            >
-                <i className="bi bi-bell-fill fs-3 text-primary"></i>
-            </Button>
+
 
 
 

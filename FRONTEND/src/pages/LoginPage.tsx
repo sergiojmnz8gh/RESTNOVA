@@ -68,6 +68,7 @@ export const LoginPage: React.FC = () => {
         setLoading(true);
         try {
             await loginWithGoogle(credentialResponse.credential);
+            
             setToast({ show: true, message: '¡Sesión iniciada con Google!', type: 'success' });
             
             const pendingToken = localStorage.getItem('pendingTableToken');
@@ -212,6 +213,8 @@ export const LoginPage: React.FC = () => {
                     />
                 )
             )}
+
+
         </div>
     );
 };

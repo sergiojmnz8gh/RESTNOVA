@@ -199,7 +199,7 @@ export const TablesPage: React.FC = () => {
                                             <Badge bg={isOccupied ? 'accent' : 'light'} className={isOccupied ? 'text-primary' : 'text-muted'}>
                                                 {isOccupied ? 'EN SERVICIO' : 'DISPONIBLE'}
                                             </Badge>
-                                            {isAdmin && (
+                                            {isAdmin && !isOccupied && (
                                                 <div className="admin-table-actions d-flex gap-1 ms-3">
                                                     <Button 
                                                         variant="link" 
@@ -210,17 +210,15 @@ export const TablesPage: React.FC = () => {
                                                     >
                                                         <i className="bi bi-pencil-fill fs-5"></i>
                                                     </Button>
-                                                    {!isOccupied && (
-                                                        <Button 
-                                                            variant="link" 
-                                                            size="sm" 
-                                                            className="p-0 text-danger border-0 hover-scale transition-all ms-1" 
-                                                            onClick={(e) => { e.stopPropagation(); handleDeleteTable(m.id); }}
-                                                            title="Eliminar Mesa"
-                                                        >
-                                                            <i className="bi bi-trash3-fill fs-5"></i>
-                                                        </Button>
-                                                    )}
+                                                    <Button 
+                                                        variant="link" 
+                                                        size="sm" 
+                                                        className="p-0 text-danger border-0 hover-scale transition-all ms-1" 
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteTable(m.id); }}
+                                                        title="Eliminar Mesa"
+                                                    >
+                                                        <i className="bi bi-trash3-fill fs-5"></i>
+                                                    </Button>
                                                 </div>
                                             )}
                                         </div>

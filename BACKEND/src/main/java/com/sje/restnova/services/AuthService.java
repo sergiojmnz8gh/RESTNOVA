@@ -74,8 +74,41 @@ public class AuthService {
             return usuarioRepository.findByEmail(email).orElseGet(() -> {
                 Usuario newUser = new Usuario();
                 newUser.setEmail(email);
-                newUser.setNombre((String) payload.get("given_name"));
-                newUser.setApellidos((String) payload.get("family_name"));
+                
+                String givenName = (String) payload.get("given_name");
+                String familyName = (String) payload.get("family_name");
+                String fullName = (String) payload.get("name");
+                
+                String nombre = givenName;
+                String apellidos = familyName;
+                
+                if (nombre == null || nombre.trim().isEmpty()) {
+                    if (fullName != null && !fullName.trim().isEmpty()) {
+                        int spaceIdx = fullName.indexOf(' ');
+                        if (spaceIdx != -1) {
+                            nombre = fullName.substring(0, spaceIdx).trim();
+                            apellidos = fullName.substring(spaceIdx + 1).trim();
+                        } else {
+                            nombre = fullName.trim();
+                        }
+                    } else {
+                        nombre = email.substring(0, email.indexOf('@'));
+                    }
+                } else if (apellidos == null || apellidos.trim().isEmpty()) {
+                    if (fullName != null && fullName.startsWith(nombre)) {
+                        String rest = fullName.substring(nombre.length()).trim();
+                        if (!rest.isEmpty()) {
+                            apellidos = rest;
+                        }
+                    }
+                }
+                
+                newUser.setNombre(nombre);
+                newUser.setApellidos(apellidos != null ? apellidos : "");
+                
+                String phone = (String) payload.get("phone_number");
+                newUser.setTelefono(phone != null ? phone : "");
+                
                 newUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
                 
                 String pictureUrl = (String) payload.get("picture");

@@ -52,9 +52,20 @@ public class ImagenService {
         }
 
         try {
-            Path dirPath = Paths.get("/app/uploads/usuarios/");
+            Path dirPath = Paths.get("../FRONTEND/public/usuarios");
             if (!Files.exists(dirPath)) {
-                Files.createDirectories(dirPath);
+                dirPath = Paths.get("./FRONTEND/public/usuarios");
+            }
+            
+            if (!Files.exists(dirPath)) {
+                dirPath = Paths.get("/app/uploads/usuarios");
+                if (!Files.exists(dirPath)) {
+                    Files.createDirectories(dirPath);
+                }
+            } else {
+                if (!Files.exists(dirPath)) {
+                    Files.createDirectories(dirPath);
+                }
             }
 
             String originalFilename = archivo.getOriginalFilename();
@@ -63,7 +74,7 @@ public class ImagenService {
                 extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
 
-            String filename = id + extension;
+            String filename = "user_" + id + extension;
             Path filePath = dirPath.resolve(filename);
 
             Files.copy(archivo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);

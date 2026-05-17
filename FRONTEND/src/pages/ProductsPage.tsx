@@ -20,8 +20,8 @@ export const ProductsPage: React.FC = () => {
     
     
     const isAdmin = user?.rol?.includes('ADMIN');
-    const isKitchen = user?.rol?.includes('COCINA');
-    const isWaiter = user?.rol?.includes('SALA');
+    const isKitchen = user?.rol?.includes('COCINA') || isAdmin;
+    const isWaiter = user?.rol?.includes('CAMARERO') || isAdmin;
 
     
     const [showModal, setShowModal] = useState(false);
@@ -360,6 +360,7 @@ export const ProductsPage: React.FC = () => {
                                 <Form.Group>
                                     <Form.Label className="small fw-800 text-muted text-uppercase letter-spacing-1">Descripción y Detalles (Incluir Ingredientes)</Form.Label>
                                     <Form.Control
+                                        required
                                         as="textarea"
                                         rows={3}
                                         className="premium-input bg-light border-0"

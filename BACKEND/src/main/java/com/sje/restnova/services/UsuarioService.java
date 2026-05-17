@@ -4,6 +4,9 @@ import com.sje.restnova.dtos.mapper.UsuarioMapper;
 import com.sje.restnova.dtos.response.UsuarioResponse;
 import com.sje.restnova.repositories.UsuarioRepository;
 import com.sje.restnova.repositories.RolRepository;
+import com.sje.restnova.repositories.PedidoRepository;
+import com.sje.restnova.repositories.ReservaRepository;
+import com.sje.restnova.repositories.SesionMesaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,9 @@ public class UsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PedidoRepository pedidoRepository;
+    private final ReservaRepository reservaRepository;
+    private final SesionMesaRepository sesionMesaRepository;
 
     public List<UsuarioResponse> getAllUsers() {
         return usuarioRepository.findAll().stream()
@@ -59,6 +65,10 @@ public class UsuarioService {
         if (!usuarioRepository.existsById(id)) {
             throw new com.sje.restnova.exceptions.ResourceNotFoundException("Usuario no encontrado");
         }
+        pedidoRepository.nullifyUsuario(id);
+        reservaRepository.deleteByUsuarioId(id);
+        sesionMesaRepository.deleteByCamareroId(id);
+        
         usuarioRepository.deleteById(id);
     }
 
