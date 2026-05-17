@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Table, Badge, Button, Form, InputGroup, Spinner, Modal } from 'react-bootstrap';
-import { useUI } from '../context/UIContext';
-import { useAuth } from '../context/AuthContext';
-import { productoService } from '../services/productoService';
+import React, { useEffect, useState } from 'react';
+import { Badge, Button, Card, Col, Form, InputGroup, Modal, Row, Spinner, Table } from 'react-bootstrap';
 import { PageHeader } from '../components/PageHeader';
+import { useAuth } from '../context/AuthContext';
+import { useUI } from '../context/UIContext';
 import { BASE_URL } from '../services/apiConfig';
+import { productoService } from '../services/productoService';
 
-import type { Product } from '../types/ProductTypes';
 import type { Category } from '../types/CategoryTypes';
+import type { Product } from '../types/ProductTypes';
 
 export const ProductsPage: React.FC = () => {
     const { showToast, showConfirm } = useUI();
@@ -17,13 +17,13 @@ export const ProductsPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('Todas');
-    
-    
+
+
     const isAdmin = user?.rol?.includes('ADMIN');
     const isKitchen = user?.rol?.includes('COCINA') || isAdmin;
     const isWaiter = user?.rol?.includes('CAMARERO') || isAdmin;
 
-    
+
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -72,7 +72,7 @@ export const ProductsPage: React.FC = () => {
     };
 
     const handleOpenModal = (product: Product | null = null) => {
-        if (!isAdmin) return; 
+        if (!isAdmin) return;
         setImageFile(null);
         if (product) {
             setEditingProduct(product);
@@ -122,17 +122,17 @@ export const ProductsPage: React.FC = () => {
                 showToast('Éxito', 'Producto creado correctamente');
             }
 
-            
+
             if (imageFile && productId) {
                 const imgFormData = new FormData();
                 imgFormData.append('imagen', imageFile);
-                
+
                 const api = (await import('../services/apiConfig')).default;
                 await api.post(`/productos/${productId}/imagen`, imgFormData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
             }
-            
+
             setShowModal(false);
             setEditingProduct(null);
             setImageFile(null);
@@ -145,7 +145,7 @@ export const ProductsPage: React.FC = () => {
     };
 
     const handleDelete = (id: number, name: string) => {
-        if (!isAdmin) return; 
+        if (!isAdmin) return;
         showConfirm(
             'Eliminar Producto',
             `¿Estás seguro de que deseas eliminar permanentemente "${name}" de la carta?`,
@@ -158,7 +158,7 @@ export const ProductsPage: React.FC = () => {
                     showToast('Error', 'No se pudo eliminar el producto', 'danger');
                 }
             },
-            true 
+            true
         );
     };
 
@@ -170,15 +170,15 @@ export const ProductsPage: React.FC = () => {
         const dispA = a.disponible ? 1 : 0;
         const dispB = b.disponible ? 1 : 0;
         if (dispA !== dispB) {
-            return dispA - dispB; 
+            return dispA - dispB;
         }
         return a.nombre.localeCompare(b.nombre);
     });
 
     return (
         <div className="container-fluid py-4 fade-in pb-5">
-            <PageHeader 
-                title="Productos y Stock" 
+            <PageHeader
+                title="Productos y Stock"
                 description="Control de disponibilidad en tiempo real e inventario operativo"
                 action={isAdmin ? {
                     label: 'Nuevo Producto',
@@ -200,8 +200,8 @@ export const ProductsPage: React.FC = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </InputGroup>
-                    
-                    <Form.Select 
+
+                    <Form.Select
                         className="premium-select border-0 bg-light fw-bold text-primary px-4 py-3 shadow-sm rounded-3"
                         style={{ width: '180px' }}
                         value={selectedCategory}
@@ -244,9 +244,9 @@ export const ProductsPage: React.FC = () => {
                                             <td className="py-3 px-4">
                                                 <div className="d-flex align-items-center gap-3">
                                                     <div className="product-img-wrapper rounded-3 overflow-hidden shadow-sm" style={{ width: '55px', height: '55px' }}>
-                                                        <img 
-                                                            src={p.imagenUrl ? (p.imagenUrl.startsWith('http') ? p.imagenUrl : `${BASE_URL}${p.imagenUrl}`) : `${BASE_URL}/productos/${p.id}.png`} 
-                                                            alt={p.nombre} 
+                                                        <img
+                                                            src={p.imagenUrl ? (p.imagenUrl.startsWith('http') ? p.imagenUrl : `${BASE_URL}${p.imagenUrl}`) : `${BASE_URL}/productos/${p.id}.png`}
+                                                            alt={p.nombre}
                                                             className="w-100 h-100 object-fit-cover"
                                                             onError={(e) => (e.currentTarget.src = 'https://placehold.co/100x100/2c3e50/white?text=RestNova')}
                                                         />
@@ -273,14 +273,14 @@ export const ProductsPage: React.FC = () => {
                                             <td className="py-3 text-end px-4">
                                                 <div className="d-flex justify-content-end gap-2 align-items-center">
                                                     {(isAdmin || isKitchen || isWaiter) && (
-                                                        <Button 
-                                                            variant={p.disponible ? "outline-danger" : "outline-success"} 
-                                                            size="sm" 
+                                                        <Button
+                                                            variant={p.disponible ? "outline-danger" : "outline-success"}
+                                                            size="sm"
                                                             className="fw-bold px-3 py-2 text-uppercase"
                                                             style={{ borderRadius: '8px', fontSize: '0.75rem' }}
                                                             onClick={() => toggleAvailability(p)}
                                                         >
-                                                            {p.disponible ? 'Agotado' : 'Disponible'}
+                                                            {p.disponible ? 'Marcar como Agotado' : 'Marcar como Disponible'}
                                                         </Button>
                                                     )}
                                                     {isAdmin && (
@@ -304,7 +304,7 @@ export const ProductsPage: React.FC = () => {
                 )}
             </Card>
 
-            {}
+            { }
             <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
                 <Modal.Header closeButton className="border-bottom-0 px-4 pt-4">
                     <Modal.Title className="fw-bold fs-2 text-primary">

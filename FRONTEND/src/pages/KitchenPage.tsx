@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Badge, Button, Spinner } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Badge, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useUI } from '../context/UIContext';
 import { pedidoService } from '../services/pedidoService';
 
@@ -15,11 +15,11 @@ export const KitchenPage: React.FC = () => {
     const loadOrders = async () => {
         try {
             const data = await pedidoService.listarTodos();
-            
-            const activeOrders = data.filter((o: Pedido) => 
+
+            const activeOrders = data.filter((o: Pedido) =>
                 ['PENDIENTE', 'EN_PREPARACION', 'LISTO_PARA_SERVIR'].includes(o.estado)
             ).sort((a: Pedido, b: Pedido) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime());
-            
+
             setOrders(activeOrders);
         } catch (error) {
             console.error('Error loading kitchen orders', error);
@@ -34,10 +34,10 @@ export const KitchenPage: React.FC = () => {
         const loadOrdersWithSound = async () => {
             try {
                 const data = await pedidoService.listarTodos();
-                const activeOrders = data.filter((o: Pedido) => 
+                const activeOrders = data.filter((o: Pedido) =>
                     ['PENDIENTE', 'EN_PREPARACION', 'LISTO_PARA_SERVIR'].includes(o.estado)
                 ).sort((a: Pedido, b: Pedido) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime());
-                
+
                 setOrders(activeOrders);
 
                 const newOrds = activeOrders.filter((o: Pedido) => o.estado === 'PENDIENTE');
@@ -64,7 +64,7 @@ export const KitchenPage: React.FC = () => {
     const updateOrderStatus = async (id: number, newStatus: string) => {
         try {
             await pedidoService.actualizarEstado(id, newStatus);
-            
+
             showToast('Actualizado', `Pedido movido a ${newStatus.replace(/_/g, ' ')}`);
             loadOrders();
         } catch (error) {
@@ -80,7 +80,7 @@ export const KitchenPage: React.FC = () => {
     if (loading && orders.length === 0) {
         return (
             <div className="d-flex flex-column justify-content-center align-items-center vh-100 gap-4">
-                <Spinner animation="border" className="text-accent" style={{width: '3.5rem', height: '3.5rem'}} />
+                <Spinner animation="border" className="text-accent" style={{ width: '3.5rem', height: '3.5rem' }} />
                 <h2 className="fw-bold text-primary m-0">CONECTANDO CON FOGONES...</h2>
             </div>
         );
@@ -88,8 +88,8 @@ export const KitchenPage: React.FC = () => {
 
     return (
         <Container fluid className="py-4 fade-in min-vh-100 pb-5">
-            <PageHeader 
-                title="Monitor de Cocina" 
+            <PageHeader
+                title="Monitor de Cocina"
                 description="Gestión de comandas en tiempo real y flujo de producción"
             />
 
@@ -110,11 +110,11 @@ export const KitchenPage: React.FC = () => {
 
                         if (order.estado === 'PENDIENTE') {
                             nextState = 'EN_PREPARACION';
-                            actionText = 'COMENZAR MARCHA';
+                            actionText = 'COMENZAR PREPARACIÓN';
                             variant = 'primary';
                         } else if (order.estado === 'EN_PREPARACION') {
                             nextState = 'LISTO_PARA_SERVIR';
-                            actionText = 'PLATO TERMINADO';
+                            actionText = 'COMANDA LISTA';
                             variant = 'accent';
                         }
 
@@ -147,8 +147,8 @@ export const KitchenPage: React.FC = () => {
                                         </div>
 
                                         {nextState ? (
-                                            <Button 
-                                                variant={variant} 
+                                            <Button
+                                                variant={variant}
                                                 className={`w-100 fw-bold py-3 shadow-sm border-0 ${variant === 'accent' ? 'text-primary' : ''}`}
                                                 onClick={() => updateOrderStatus(order.id, nextState)}
                                             >

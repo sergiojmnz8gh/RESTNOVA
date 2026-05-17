@@ -19,7 +19,17 @@ El despliegue con Docker es la forma más rápida de ejecutar la aplicación con
    ```bash
    docker-compose up --build -d
    ```
-3. ¡Listo! Los servicios estarán disponibles en los siguientes enlaces:
+3. ¡Listo! Estarán disponibles los siguientes enlaces:
    * **Aplicación Web (Frontend)**: [http://localhost](http://localhost)
-   * **API del Servidor (Backend)**: [http://localhost:8080](http://localhost:8080)
+
    * **Documentación Interactiva de la API**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+## ©️ Licencia
+
+[![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
+
+El código fuente y la documentación de **RESTNOVA** se distribuyen bajo una licencia **Creative Commons**.
+
+Esta obra está sujeta a una licencia [Reconocimiento-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)][cc-by-sa] de Creative Commons. Para ver una copia de esta licencia, visite http://creativecommons.org/licenses/by-sa/4.0/ o envíe una carta a Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
+[cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
+[cc-by-sa]: http://creativecommons.org/licenses/by-sa/4.0/

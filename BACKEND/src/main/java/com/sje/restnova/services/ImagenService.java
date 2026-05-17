@@ -21,7 +21,18 @@ public class ImagenService {
         }
 
         try {
-            Path dirPath = Paths.get(DIRECTORY);
+            String projectDir = System.getProperty("user.dir");
+            Path dirPath = Paths.get(projectDir).getParent().resolve("FRONTEND/public/productos");
+            
+            if (!Files.exists(dirPath)) {
+                dirPath = Paths.get(projectDir).resolve("FRONTEND/public/productos");
+                if (!Files.exists(dirPath)) {
+                    dirPath = Paths.get(DIRECTORY);
+                    if (!Files.exists(dirPath)) {
+                        Files.createDirectories(dirPath);
+                    }
+                }
+            }
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
             }
@@ -52,20 +63,20 @@ public class ImagenService {
         }
 
         try {
-            Path dirPath = Paths.get("../FRONTEND/public/usuarios");
-            if (!Files.exists(dirPath)) {
-                dirPath = Paths.get("./FRONTEND/public/usuarios");
-            }
+            String projectDir = System.getProperty("user.dir");
+            Path dirPath = Paths.get(projectDir).getParent().resolve("FRONTEND/public/usuarios");
             
             if (!Files.exists(dirPath)) {
-                dirPath = Paths.get("/app/uploads/usuarios");
+                dirPath = Paths.get(projectDir).resolve("FRONTEND/public/usuarios");
                 if (!Files.exists(dirPath)) {
-                    Files.createDirectories(dirPath);
+                    dirPath = Paths.get("/app/uploads/usuarios"); 
+                    if (!Files.exists(dirPath)) {
+                        Files.createDirectories(dirPath);
+                    }
                 }
-            } else {
-                if (!Files.exists(dirPath)) {
-                    Files.createDirectories(dirPath);
-                }
+            }
+            if (!Files.exists(dirPath)) {
+                Files.createDirectories(dirPath);
             }
 
             String originalFilename = archivo.getOriginalFilename();
