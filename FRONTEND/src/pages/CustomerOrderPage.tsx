@@ -164,7 +164,7 @@ export const CustomerOrderPage: React.FC = () => {
                                         <Card.Body className="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
                                             <div className="bg-light rounded-4 overflow-hidden flex-shrink-0" style={{ width: '100%', height: '120px', maxWidth: '120px' }}>
                                                 <img 
-                                                    src={p.imagenUrl ? (p.imagenUrl.startsWith('http') ? p.imagenUrl : `${BASE_URL}${p.imagenUrl}`) : `${BASE_URL}/productos/${p.id}.png`} 
+                                                    src={(p.imagenUrl ? (p.imagenUrl.startsWith('http') ? p.imagenUrl : `${BASE_URL}${p.imagenUrl}`) : `${BASE_URL}/productos/${p.id}.png`) + "?v=" + new Date().getTime()} 
                                                     alt={p.nombre} 
                                                     className="w-100 h-100 object-fit-cover"
                                                     onError={(e) => {

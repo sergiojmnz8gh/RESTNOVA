@@ -245,7 +245,7 @@ export const ProductsPage: React.FC = () => {
                                                 <div className="d-flex align-items-center gap-3">
                                                     <div className="product-img-wrapper rounded-3 overflow-hidden shadow-sm" style={{ width: '55px', height: '55px' }}>
                                                         <img
-                                                            src={p.imagenUrl ? (p.imagenUrl.startsWith('http') ? p.imagenUrl : `${BASE_URL}${p.imagenUrl}`) : `${BASE_URL}/productos/${p.id}.png`}
+                                                            src={(p.imagenUrl ? (p.imagenUrl.startsWith('http') ? p.imagenUrl : `${BASE_URL}${p.imagenUrl}`) : `${BASE_URL}/productos/${p.id}.png`) + "?v=" + new Date().getTime()}
                                                             alt={p.nombre}
                                                             className="w-100 h-100 object-fit-cover"
                                                             onError={(e) => (e.currentTarget.src = 'https://placehold.co/100x100/2c3e50/white?text=RestNova')}

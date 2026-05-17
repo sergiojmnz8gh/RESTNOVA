@@ -246,7 +246,7 @@ export const DesktopSidebar: React.FC = () => {
                                         height: '40px', 
                                         width: '40px',
                                         objectFit: 'contain',
-                                        filter: 'drop-shadow(0 0 8px rgba(231, 158, 10, 0.3))'
+                                        filter: 'brightness(0) invert(1) drop-shadow(0 0 8px rgba(231, 158, 10, 0.3))'
                                     }} 
                                     className="fade-in"
                                 />

@@ -32,8 +32,8 @@ export const productoService = {
         await api.delete(`/productos/${id}`);
     },
 
-    
-    listarCategorias: async (): Promise<Category[]> => {
+
+        listarCategorias: async (): Promise<Category[]> => {
         const response = await api.get('/categorias');
         return response.data;
     },

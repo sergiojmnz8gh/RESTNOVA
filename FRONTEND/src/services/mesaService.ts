@@ -25,8 +25,8 @@ export const mesaService = {
         await api.delete(`/mesas/${id}`);
     },
 
-    
-    listarSesionesActivas: async (): Promise<any[]> => {
+
+        listarSesionesActivas: async (): Promise<any[]> => {
         const response = await api.get('/sesiones-mesa');
         return response.data;
     },

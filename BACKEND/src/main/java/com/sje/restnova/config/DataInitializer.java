@@ -92,7 +92,7 @@ public class DataInitializer implements CommandLineRunner {
         getOrCreateProducto("Acqua Panna", "3.00", bibite, "Agua mineral natural sin gas de la Toscana. 500ml.", "/productos/25.png");
         getOrCreateProducto("Limoncello Spritz", "7.50", bibite, "Refrescante cóctel con limoncello, prosecco y soda.", "/productos/26.png");
 
-        // Asegurar que absolutamente todos los productos tengan descripción en la base de datos
+        
         for (Producto p : productoRepository.findAll()) {
             if (p.getDescripcion() == null || p.getDescripcion().trim().isEmpty()) {
                 p.setDescripcion("Exquisito plato elaborado al estilo tradicional con ingredientes frescos seleccionados.");

@@ -3,8 +3,8 @@ import type { LoginRequest, RegisterRequest, TokenResponse } from '../types/Auth
 
 
 export const authService = {
-    
-    login: async (credentials: LoginRequest): Promise<TokenResponse> => {
+
+        login: async (credentials: LoginRequest): Promise<TokenResponse> => {
         try {
             const response = await api.post('/auth/login', credentials);
             return response.data;
@@ -24,8 +24,8 @@ export const authService = {
         }
     },
 
-    
-    register: async (data: RegisterRequest): Promise<TokenResponse> => {
+
+        register: async (data: RegisterRequest): Promise<TokenResponse> => {
         try {
             const response = await api.post('/auth/registro', data);
             return response.data;
@@ -35,8 +35,8 @@ export const authService = {
         }
     },
 
-    
-    parseToken: (token: string) => {
+
+        parseToken: (token: string) => {
         try {
             return JSON.parse(atob(token.split('.')[1]));
         } catch (e) {

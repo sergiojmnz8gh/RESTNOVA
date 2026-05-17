@@ -109,7 +109,7 @@ export const MenuPage: React.FC = () => {
                                             >
                                                 <div className="flex-shrink-0" style={{ width: '140px', height: '140px' }}>
                                                     <img 
-                                                        src={`/productos/${p.id}.png`} 
+                                                        src={(p.imagenUrl ? (p.imagenUrl.startsWith('http') ? p.imagenUrl : `http://localhost:8080${p.imagenUrl}`) : `http://localhost:8080/productos/${p.id}.png`) + "?v=" + new Date().getTime()} 
                                                         alt={p.nombre}
                                                         className="w-100 h-100 object-fit-cover rounded-circle shadow-sm border border-light p-1 bg-white"
                                                         onError={(e) => {

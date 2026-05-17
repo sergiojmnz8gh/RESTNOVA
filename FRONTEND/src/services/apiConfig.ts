@@ -27,13 +27,13 @@ api.interceptors.response.use(
     },
     (error) => {
         if (error.response && error.response.status === 401) {
-            
-            localStorage.removeItem('token');
+
+                        localStorage.removeItem('token');
             localStorage.removeItem('user');
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('user');
-            
-            if (window.location.pathname !== '/login') {
+
+                        if (window.location.pathname !== '/login') {
                 window.location.href = '/login';
             }
         }
